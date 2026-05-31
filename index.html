@@ -110,10 +110,10 @@ input[type=file]{display:none}
 .gps-status.active{color:var(--g);border-color:rgba(182,245,66,0.3)}
 
 /* ─── STATS ROW ─── */
-.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
-.stat{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:12px 8px;text-align:center}
-.stat-v{font-family:'Space Mono',monospace;font-size:1.35rem;color:var(--g)}
-.stat-l{font-size:0.6rem;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-top:3px}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px}
+.stat{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:12px 6px;text-align:center}
+.stat-v{font-family:'Space Mono',monospace;font-size:1.25rem;color:var(--g)}
+.stat-l{font-size:0.58rem;color:var(--mu);text-transform:uppercase;letter-spacing:0.5px;margin-top:3px}
 
 /* ─── CONTROLS ─── */
 .ctrls{display:flex;gap:8px;margin-bottom:12px}
@@ -222,10 +222,18 @@ input[type=file]{display:none}
     <div style="display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px" id="dayPills"></div>
   </div>
 
-  <!-- Mode badge -->
-  <div id="modeBanner" style="text-align:center;margin-bottom:10px;font-size:0.78rem;padding:8px;border-radius:10px;background:var(--s2);border:1px solid var(--bd)">
-    Mode : <strong id="modeBannerTxt" style="color:var(--g)">Marche + Course</strong>
-    &nbsp;·&nbsp; <span id="targetBannerTxt" style="color:var(--mu)">Objectif : 5.0 km</span>
+  <!-- Mode & Infos badge -->
+  <div id="modeBanner" style="margin-bottom:10px;font-size:0.75rem;padding:10px;border-radius:12px;background:var(--s2);border:1px solid var(--bd);display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+    <div style="grid-column:1/-1;border-bottom:1px solid var(--bd);padding-bottom:6px;display:flex;justify-content:space-between;">
+      <span>Mode : <strong id="modeBannerTxt" style="color:var(--g)">Marche + Course</strong></span>
+      <span id="targetBannerTxt" style="color:var(--tx)">Objectif : 5.0 km</span>
+    </div>
+    <div style="text-align:left;color:var(--mu);">
+      🚶 Marche: <strong id="infoWalkSpeed" style="color:var(--g)">5.0 km/h</strong> (<span id="infoWalkPct">0%</span>)
+    </div>
+    <div style="text-align:right;color:var(--mu);" id="infoRunBlock">
+      🏃 Course: <strong id="infoRunSpeed" style="color:var(--o)">10.0 km/h</strong> (<span id="infoRunPct">0%</span>)
+    </div>
   </div>
 
   <!-- Timer hero -->
@@ -250,6 +258,7 @@ input[type=file]{display:none}
   <div class="stats-row">
     <div class="stat"><div class="stat-v" id="sKm">0.00</div><div class="stat-l">km</div></div>
     <div class="stat"><div class="stat-v" id="sTime">00:00</div><div class="stat-l">durée</div></div>
+    <div class="stat"><div class="stat-v" id="sSpeed">0.0</div><div class="stat-l">km/h</div></div>
     <div class="stat"><div class="stat-v" id="sCyc">0</div><div class="stat-l">cycles</div></div>
   </div>
 
@@ -312,7 +321,10 @@ input[type=file]{display:none}
         </div>
       </div>
       <div class="set-box full">
-        <div class="set-lbl">📏 Distance cible</div>
+        <div class="set-lbl" style="display:flex; justify-content:space-between; align-items:center;">
+          <span>📏 Distance cible</span>
+          <span id="settingsPctLabel" style="color:var(--g); font-size:0.6rem; text-transform:none; letter-spacing:0.5px;"></span>
+        </div>
         <div class="set-val ac" id="sv-dist">5.0 km</div>
         <div class="stepper">
           <button onclick="adj('dist',-0.5)">−</button>
@@ -560,6 +572,7 @@ function loadSettingsUI() {
   buildIvPreview();
   buildDayPills();
   updateTimerBanner();
+  updateWalkRunStats();
 }
 
 function applyModeUI(m) {
@@ -573,7 +586,7 @@ function applyModeUI(m) {
 
 function setMode(m) {
   daySettings[currentDay].mode = m;
-  saveDay(); applyModeUI(m); buildIvPreview(); updateTimerBanner();
+  saveDay(); applyModeUI(m); buildIvPreview(); updateTimerBanner(); updateWalkRunStats();
 }
 
 function adj(key, delta) {
@@ -583,7 +596,7 @@ function adj(key, delta) {
   else if (key==='dist') { s.distKm=Math.max(0.5,+(s.distKm+delta).toFixed(1)); document.getElementById('sv-dist').textContent=s.distKm.toFixed(1)+' km'; }
   else if (key==='wspd') { s.wspd=Math.max(1,+(s.wspd+delta).toFixed(1)); document.getElementById('sv-wspd').textContent=s.wspd.toFixed(1); }
   else if (key==='rspd') { s.rspd=Math.max(2,+(s.rspd+delta).toFixed(1)); document.getElementById('sv-rspd').textContent=s.rspd.toFixed(1); }
-  buildIvPreview(); saveDay(); updateTimerBanner();
+  buildIvPreview(); saveDay(); updateTimerBanner(); updateWalkRunStats();
 }
 
 function togOpt(k) {
@@ -591,6 +604,7 @@ function togOpt(k) {
   document.getElementById('tog-'+k).className = 'tog'+(daySettings[currentDay][k]?' on':'');
   saveDay();
   updateTimerBanner();
+  updateWalkRunStats();
 }
 
 function buildIvPreview() {
@@ -609,7 +623,7 @@ function buildIvPreview() {
 function updateTimerBanner() {
   const s = daySettings[currentDay];
   const isWalkMode = s.mode==='walk';
-  document.getElementById('modeBannerTxt').textContent = isWalkMode ? '🚶 Marche seulement' : '🚶🏃 Marche + Course';
+  document.getElementById('modeBannerTxt').textContent = isWalkMode ? 'Marche' : 'Marche + Course';
   document.getElementById('modeBannerTxt').style.color = isWalkMode ? 'var(--g)' : 'var(--o)';
   document.getElementById('targetBannerTxt').textContent = 'Objectif : '+s.distKm.toFixed(1)+' km';
   
@@ -621,6 +635,36 @@ function updateTimerBanner() {
   } else {
     indicator.textContent = '⏱ Mode Estimé';
     indicator.classList.remove('active');
+  }
+}
+
+function updateWalkRunStats() {
+  const s = daySettings[currentDay];
+  const isWalkMode = s.mode==='walk';
+  let wPct = 100;
+  let rPct = 0;
+  
+  if (!isWalkMode) {
+    const total = s.walkSec + s.runSec;
+    wPct = Math.round((s.walkSec / total) * 100);
+    rPct = 100 - wPct;
+  }
+  
+  // Mise à jour des pourcentages et vitesses dans la boîte du Timer
+  document.getElementById('infoWalkPct').textContent = `${wPct}%`;
+  document.getElementById('infoRunPct').textContent = `${rPct}%`;
+  document.getElementById('infoWalkSpeed').textContent = `${s.wspd.toFixed(1)} km/h`;
+  document.getElementById('infoRunSpeed').textContent = `${s.rspd.toFixed(1)} km/h`;
+  
+  const infoRunBlock = document.getElementById('infoRunBlock');
+  if (infoRunBlock) {
+    infoRunBlock.style.opacity = isWalkMode ? '0.2' : '1';
+  }
+  
+  // Étiquette de pourcentage dans la prévisualisation des Réglages
+  const settingsPctLabel = document.getElementById('settingsPctLabel');
+  if (settingsPctLabel) {
+    settingsPctLabel.textContent = isWalkMode ? '🚶 100% Marche' : `🚶 ${wPct}% Marche / 🏃 ${rPct}% Course`;
   }
 }
 
@@ -732,12 +776,24 @@ function startGpsTracking() {
           lastGpsCoords.latitude, lastGpsCoords.longitude,
           coords.latitude, coords.longitude
         );
-        // Filtrage de cohérence physique (vitesse < 35km/h pour éliminer les sauts GPS majeurs)
+        // Filtrage de cohérence physique (< 35km/h)
         if (d > 0 && d < 0.01) { 
           dist += d;
         }
       }
       lastGpsCoords = coords;
+      
+      // Mise à jour de la vitesse GPS réelle
+      if (coords.speed !== null && coords.speed !== undefined) {
+        const currentGpsSpeed = coords.speed * 3.6; // Converti m/s en km/h
+        document.getElementById('sSpeed').textContent = currentGpsSpeed.toFixed(1);
+      } else {
+        // Fallback si la puce GPS ne renvoie pas la vitesse instantanée brute
+        const s = daySettings[currentDay];
+        const estSpeed = (isWalk || s.mode==='walk') ? s.wspd : s.rspd;
+        document.getElementById('sSpeed').textContent = estSpeed.toFixed(1);
+      }
+      
       indicator.textContent = `📡 GPS Actif (±${Math.round(coords.accuracy)}m)`;
       indicator.classList.add('active');
     },
@@ -758,7 +814,6 @@ function stopGpsTracking() {
   lastGpsCoords = null;
 }
 
-// Formule de Haversine pour calculer la distance entre deux coordonnées
 function calculateGpsDistance(lat1, lon1, lat2, lon2) {
   const R = 6371; // Rayon de la terre en km
   const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -795,7 +850,6 @@ function releaseWakeLock() {
 let ticker=null, elapsed=0, phaseTime=0, isWalk=true, cycles=0, dist=0, paused=false, running=false, sessStart=null;
 
 function startSession() {
-  // Déverrouille les API Audio/Vocale pour le mobile
   const silence = new AudioContext();
   silence.resume();
   
@@ -810,6 +864,9 @@ function startSession() {
   
   if (s.useGps) {
     startGpsTracking();
+  } else {
+    // Affiche la vitesse estimée initiale de marche
+    document.getElementById('sSpeed').textContent = s.wspd.toFixed(1);
   }
   
   speak('Commencez à marcher !',false);beep(440,.3);
@@ -824,10 +881,16 @@ function pauseSession() {
     aud.walk.pause();aud.run.pause();
     speak('Pause',false);
     stopGpsTracking();
+    document.getElementById('sSpeed').textContent = "0.0";
   }
   else{
     const s = daySettings[currentDay];
-    if (s.useGps) startGpsTracking();
+    if (s.useGps) {
+      startGpsTracking();
+    } else {
+      const currentSpeed = (isWalk || s.mode==='walk') ? s.wspd : s.rspd;
+      document.getElementById('sSpeed').textContent = currentSpeed.toFixed(1);
+    }
     playFor(isWalk);
     speak(isWalk?'Reprenez la marche !':'Courez !',!isWalk);
   }
@@ -847,6 +910,7 @@ function stopSession() {
   document.getElementById('timerBig').textContent='00:00';
   document.getElementById('timerHint').textContent='Session terminée ✓';
   document.getElementById('progFill').style.width='0%';
+  document.getElementById('sSpeed').textContent = "0.0";
   setPhaseUI(true);
   updateTimerBanner();
 }
@@ -864,8 +928,6 @@ function saveSessionRecord() {
     mode: s.mode
   });
   saveSessions(all);
-  
-  // Notification visuelle sur l'onglet historique
   document.getElementById('tab-history').classList.add('has-data');
 }
 
@@ -878,8 +940,10 @@ function tick() {
   
   // Si le GPS n'est pas activé, on calcule sur la vitesse estimée
   if (!s.useGps) {
-    const spd = ((isWalk||walkOnly)?s.wspd:s.rspd)/3600;
+    const currentSpeed = (isWalk || walkOnly) ? s.wspd : s.rspd;
+    const spd = currentSpeed/3600;
     dist+=spd;
+    document.getElementById('sSpeed').textContent = currentSpeed.toFixed(1);
   }
   
   const rem=pd-phaseTime;
@@ -1107,7 +1171,6 @@ function getWeekMon(d){const t=new Date(d);const day=t.getDay(),diff=t.getDate()
 // ════════════════════════════════════════════════
 buildDayPills();
 loadSettingsUI();
-// Mark history tab if data exists
 if(Object.keys(getAllSessions()).length) document.getElementById('tab-history').classList.add('has-data');
 </script>
 </body>
