@@ -67,7 +67,7 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--tx);min-heig
 .tog-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bd)}
 .tog-row:last-child{border-bottom:none}
 .tog-lbl{font-size:0.8rem;color:var(--mu)}
-.tog{width:42px;height:23px;background:var(--bd);border-radius:12px;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0}
+.tog{width:42px;height:23px;background:var(--bd);border-radius:12px;cursor:pointer;position:relative;transition:background .2s}
 .tog.on{background:var(--g)}
 .tog::after{content:'';width:17px;height:17px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:transform .2s}
 .tog.on::after{transform:translateX(19px)}
@@ -764,9 +764,11 @@ function startGpsTracking() {
     (pos) => {
       if (paused || !running) return;
       const coords = pos.coords;
+      const s = daySettings[currentDay];
+      const walkOnly = s.mode==='walk';
       
-      // On filtre les points à très faible précision (> 25m) pour éviter les sauts de distance
-      if (coords.accuracy > 25) {
+      // On élargit la tolérance de précision à 50m (au lieu de 25m qui était trop restrictif)
+      if (coords.accuracy > 50) {
         indicator.textContent = `📡 Précision faible (${Math.round(coords.accuracy)}m)`;
         return;
       }
@@ -776,12 +778,18 @@ function startGpsTracking() {
           lastGpsCoords.latitude, lastGpsCoords.longitude,
           coords.latitude, coords.longitude
         );
-        // Filtrage de cohérence physique (< 35km/h)
-        if (d > 0 && d < 0.01) { 
+        // Filtrage de cohérence physique (max 150m par mise à jour de position pour éviter les sauts absurdes)
+        if (d > 0 && d < 0.15) { 
           dist += d;
+          if (isWalk || walkOnly) {
+            distWalk += d;
+          } else {
+            distRun += d;
+          }
         }
       }
       lastGpsCoords = coords;
+      lastGpsTimestamp = Date.now(); // Mémorise l'instant du dernier signal valide reçu
       
       // Mise à jour de la vitesse GPS réelle
       if (coords.speed !== null && coords.speed !== undefined) {
@@ -789,8 +797,7 @@ function startGpsTracking() {
         document.getElementById('sSpeed').textContent = currentGpsSpeed.toFixed(1);
       } else {
         // Fallback si la puce GPS ne renvoie pas la vitesse instantanée brute
-        const s = daySettings[currentDay];
-        const estSpeed = (isWalk || s.mode==='walk') ? s.wspd : s.rspd;
+        const estSpeed = (isWalk || walkOnly) ? s.wspd : s.rspd;
         document.getElementById('sSpeed').textContent = estSpeed.toFixed(1);
       }
       
@@ -847,13 +854,14 @@ function releaseWakeLock() {
 // ════════════════════════════════════════════════
 //  TIMER ENGINE
 // ════════════════════════════════════════════════
-let ticker=null, elapsed=0, phaseTime=0, isWalk=true, cycles=0, dist=0, paused=false, running=false, sessStart=null;
+let ticker=null, elapsed=0, phaseTime=0, isWalk=true, cycles=0, dist=0, distWalk=0, distRun=0, paused=false, running=false, sessStart=null, lastGpsTimestamp=0;
 
 function startSession() {
   const silence = new AudioContext();
   silence.resume();
   
-  running=true;paused=false;elapsed=0;phaseTime=0;cycles=0;dist=0;isWalk=true;sessStart=new Date();
+  running=true;paused=false;elapsed=0;phaseTime=0;cycles=0;dist=0;distWalk=0;distRun=0;isWalk=true;sessStart=new Date();
+  lastGpsTimestamp = Date.now();
   document.getElementById('btnGo').disabled=true;
   document.getElementById('btnPP').disabled=false;
   document.getElementById('btnSq').disabled=false;
@@ -925,7 +933,14 @@ function saveSessionRecord() {
     dur: elapsed,
     dist: +dist.toFixed(3),
     cycles,
-    mode: s.mode
+    mode: s.mode,
+    // Nouveaux indicateurs sauvegardés pour le suivi de la progression
+    walkSec: s.walkSec,
+    runSec: s.mode === 'both' ? s.runSec : 0,
+    wspd: s.wspd,
+    rspd: s.mode === 'both' ? s.rspd : 0,
+    distWalk: +distWalk.toFixed(3),
+    distRun: s.mode === 'both' ? +distRun.toFixed(3) : 0
   });
   saveSessions(all);
   document.getElementById('tab-history').classList.add('has-data');
@@ -943,7 +958,20 @@ function tick() {
     const currentSpeed = (isWalk || walkOnly) ? s.wspd : s.rspd;
     const spd = currentSpeed/3600;
     dist+=spd;
+    if (isWalk || walkOnly) {
+      distWalk += spd;
+    } else {
+      distRun += spd;
+    }
     document.getElementById('sSpeed').textContent = currentSpeed.toFixed(1);
+  } else {
+    // Mode GPS extérieur : surveillance active de la réception du signal
+    const timeSinceLastGps = (Date.now() - lastGpsTimestamp) / 1000;
+    const indicator = document.getElementById('gpsIndicator');
+    if (timeSinceLastGps > 15) {
+      indicator.textContent = "⚠️ GPS Signal Perdu";
+      indicator.classList.remove('active');
+    }
   }
   
   const rem=pd-phaseTime;
@@ -1126,19 +1154,52 @@ function renderList(all){
   dates.forEach(k=>{
     const parts=k.split('-');
     const label=`${parseInt(parts[2])} ${MONTHS_FR[parseInt(parts[1])-1]} ${parts[0]}`;
-    html+=`<div class="sec-title" style="margin:0 0 8px"><em>📅</em> ${label}</div>`;
+    html+=`<div class="sec-title" style="margin:20px 0 8px"><em>📅</em> ${label}</div>`;
     (all[k]||[]).forEach((s,i)=>html+=sessionCard(s,k,i));
   });
   document.getElementById('histContent').innerHTML=html;
 }
 
 function sessionCard(s,dateKey,idx){
+  // Permet de tolérer l'absence de données détaillées sur vos anciennes sessions enregistrées
+  const hasDetails = s.walkSec !== undefined;
+  
+  const walkSec = s.walkSec || 120;
+  const runSec = s.runSec || 60;
+  const wspd = s.wspd || 5.0;
+  const rspd = s.rspd || 10.0;
+  const distWalk = s.distWalk !== undefined ? s.distWalk : (s.mode === 'walk' ? s.dist : s.dist * 0.6);
+  const distRun = s.distRun !== undefined ? s.distRun : (s.mode === 'walk' ? 0 : s.dist * 0.4);
+
+  let detailHtml = '';
+  if (hasDetails) {
+    if (s.mode === 'both') {
+      detailHtml = `
+        <div style="margin: 8px 0; padding-top: 8px; border-top: 1px dashed var(--bd); font-size: 0.68rem; color: var(--mu); line-height: 1.45;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+            <span>🚶 Marche : <strong style="color:var(--g)">${distWalk.toFixed(2)} km</strong> (${fmtDur(walkSec)} @ ${wspd.toFixed(1)} km/h)</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>🏃 Course : <strong style="color:var(--o)">${distRun.toFixed(2)} km</strong> (${fmtDur(runSec)} @ ${rspd.toFixed(1)} km/h)</span>
+          </div>
+        </div>
+      `;
+    } else {
+      detailHtml = `
+        <div style="margin: 8px 0; padding-top: 8px; border-top: 1px dashed var(--bd); font-size: 0.68rem; color: var(--mu); line-height: 1.45;">
+          <div>🚶 Marche : <strong style="color:var(--g)">${distWalk.toFixed(2)} km</strong> (${fmtDur(walkSec)} @ ${wspd.toFixed(1)} km/h)</div>
+        </div>
+      `;
+    }
+  }
+
   return `<div class="session-card">
     <span class="sc-ico">${s.mode==='both'?'🏃':'🚶'}</span>
     <div class="sc-info">
       <div class="sc-date">${s.time}</div>
       <div class="sc-stats">${s.dist.toFixed(2)} km · ${fmtSec(s.dur)}</div>
-      <div class="sc-sub">${s.cycles} cycles · <span class="badge ${s.mode==='both'?'badge-r':'badge-w'}">${s.mode==='both'?'intervalles':'marche'}</span></div>
+      ${detailHtml}
+      <div class="sc-sub" style="margin-top: 4px;">${s.cycles} cycles · <span class="badge ${s.mode==='both'?'badge-r':'badge-w'}">${s.mode==='both'?'intervalles':'marche'}</span></div>
     </div>
     <button class="sc-del" onclick="deleteSession('${dateKey}',${idx})" title="Supprimer">✕</button>
   </div>`;
