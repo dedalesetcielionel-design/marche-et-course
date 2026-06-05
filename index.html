@@ -599,6 +599,25 @@ function adj(key, delta) {
   buildIvPreview(); saveDay(); updateTimerBanner(); updateWalkRunStats();
 }
 
+// ════════════════════════════════════════════════
+//  WAKE LOCK API (Anti-Veille Écran)
+// ════════════════════════════════════════════════
+let wakeLock = null;
+async function requestWakeLock() {
+  try {
+    if ('wakeLock' in navigator) {
+      wakeLock = await navigator.wakeLock.request('screen');
+    }
+  } catch (err) {
+    console.warn("Wake Lock non activé :", err);
+  }
+}
+function releaseWakeLock() {
+  if (wakeLock) {
+    wakeLock.release().then(() => wakeLock = null);
+  }
+}
+
 function togOpt(k) {
   daySettings[currentDay][k] = !daySettings[currentDay][k];
   document.getElementById('tog-'+k).className = 'tog'+(daySettings[currentDay][k]?' on':'');
@@ -833,34 +852,15 @@ function calculateGpsDistance(lat1, lon1, lat2, lon2) {
 }
 
 // ════════════════════════════════════════════════
-//  WAKE LOCK API (Anti-Veille Écran)
-// ════════════════════════════════════════════════
-let wakeLock = null;
-async function requestWakeLock() {
-  try {
-    if ('wakeLock' in navigator) {
-      wakeLock = await navigator.wakeLock.request('screen');
-    }
-  } catch (err) {
-    console.warn("Wake Lock non activé :", err);
-  }
-}
-function releaseWakeLock() {
-  if (wakeLock) {
-    wakeLock.release().then(() => wakeLock = null);
-  }
-}
-
-// ════════════════════════════════════════════════
 //  TIMER ENGINE
 // ════════════════════════════════════════════════
-let ticker=null, elapsed=0, phaseTime=0, isWalk=true, cycles=0, dist=0, distWalk=0, distRun=0, paused=false, running=false, sessStart=null, lastGpsTimestamp=0;
+let ticker=null, elapsed=0, phaseTime=0, isWalk=true, cycles=0, dist=0, distWalk=0, distRun=0, timeWalk=0, timeRun=0, paused=false, running=false, sessStart=null, lastGpsTimestamp=0;
 
 function startSession() {
   const silence = new AudioContext();
   silence.resume();
   
-  running=true;paused=false;elapsed=0;phaseTime=0;cycles=0;dist=0;distWalk=0;distRun=0;isWalk=true;sessStart=new Date();
+  running=true;paused=false;elapsed=0;phaseTime=0;cycles=0;dist=0;distWalk=0;distRun=0;timeWalk=0;timeRun=0;isWalk=true;sessStart=new Date();
   lastGpsTimestamp = Date.now();
   document.getElementById('btnGo').disabled=true;
   document.getElementById('btnPP').disabled=false;
@@ -928,6 +928,11 @@ function saveSessionRecord() {
   const dateKey = toDateKey(sessStart);
   const all = getAllSessions();
   if(!all[dateKey]) all[dateKey]=[];
+  
+  // Calcul des vitesses réelles moyennes de marche et de course (vitesse = distance / temps en heures)
+  let avgWspd = timeWalk > 0 ? (distWalk / (timeWalk / 3600)) : 0;
+  let avgRspd = timeRun > 0 ? (distRun / (timeRun / 3600)) : 0;
+  
   all[dateKey].push({
     time: sessStart.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}),
     dur: elapsed,
@@ -940,7 +945,10 @@ function saveSessionRecord() {
     wspd: s.wspd,
     rspd: s.mode === 'both' ? s.rspd : 0,
     distWalk: +distWalk.toFixed(3),
-    distRun: s.mode === 'both' ? +distRun.toFixed(3) : 0
+    distRun: s.mode === 'both' ? +distRun.toFixed(3) : 0,
+    // Vitesses réelles moyennes calculées
+    avgWspd: +avgWspd.toFixed(1),
+    avgRspd: s.mode === 'both' ? +avgRspd.toFixed(1) : 0
   });
   saveSessions(all);
   document.getElementById('tab-history').classList.add('has-data');
@@ -952,6 +960,13 @@ function tick() {
   const s = daySettings[currentDay];
   const walkOnly = s.mode==='walk';
   const pd = (isWalk||walkOnly)?s.walkSec:s.runSec;
+  
+  // Incrémenter le temps passé dans chaque phase (marche ou course)
+  if (isWalk || walkOnly) {
+    timeWalk++;
+  } else {
+    timeRun++;
+  }
   
   // Si le GPS n'est pas activé, on calcule sur la vitesse estimée
   if (!s.useGps) {
@@ -981,7 +996,9 @@ function tick() {
   document.getElementById('sTime').textContent=fmtSec(elapsed);
   document.getElementById('sCyc').textContent=cycles;
   
-  if(rem<=3&&rem>0)beep(580+rem*40,.1);
+  // 1. Désactivation des bips intermédiaires de décompte en mode Marche Seule
+  if(!walkOnly && rem<=3 && rem>0) beep(580+rem*40,.1);
+  
   if(phaseTime>=pd){
     if(!walkOnly){
       isWalk=!isWalk;
@@ -992,7 +1009,8 @@ function tick() {
     }
     else{
       cycles++;
-      beep(440,.2);
+      // 2. Désactivation du bip de fin de phase de 2 min en mode Marche Seule
+      // beep(440,.2);
     }
     phaseTime=0;
     setPhaseUI(isWalk||walkOnly);
@@ -1161,7 +1179,6 @@ function renderList(all){
 }
 
 function sessionCard(s,dateKey,idx){
-  // Permet de tolérer l'absence de données détaillées sur vos anciennes sessions enregistrées
   const hasDetails = s.walkSec !== undefined;
   
   const walkSec = s.walkSec || 120;
@@ -1170,24 +1187,31 @@ function sessionCard(s,dateKey,idx){
   const rspd = s.rspd || 10.0;
   const distWalk = s.distWalk !== undefined ? s.distWalk : (s.mode === 'walk' ? s.dist : s.dist * 0.6);
   const distRun = s.distRun !== undefined ? s.distRun : (s.mode === 'walk' ? 0 : s.dist * 0.4);
+  
+  // Vitesses réelles enregistrées (nouveau format)
+  const avgWspd = s.avgWspd !== undefined ? s.avgWspd : null;
+  const avgRspd = s.avgRspd !== undefined ? s.avgRspd : null;
 
   let detailHtml = '';
   if (hasDetails) {
+    const avgWspdText = avgWspd !== null ? ` | Réelle : <strong style="color:var(--g)">${avgWspd.toFixed(1)} km/h</strong>` : '';
+    const avgRspdText = avgRspd !== null ? ` | Réelle : <strong style="color:var(--o)">${avgRspd.toFixed(1)} km/h</strong>` : '';
+    
     if (s.mode === 'both') {
       detailHtml = `
         <div style="margin: 8px 0; padding-top: 8px; border-top: 1px dashed var(--bd); font-size: 0.68rem; color: var(--mu); line-height: 1.45;">
           <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
-            <span>🚶 Marche : <strong style="color:var(--g)">${distWalk.toFixed(2)} km</strong> (${fmtDur(walkSec)} @ ${wspd.toFixed(1)} km/h)</span>
+            <span>🚶 Marche : <strong style="color:var(--g)">${distWalk.toFixed(2)} km</strong> (${fmtDur(walkSec)} @ Cible ${wspd.toFixed(1)} km/h${avgWspdText})</span>
           </div>
           <div style="display: flex; justify-content: space-between;">
-            <span>🏃 Course : <strong style="color:var(--o)">${distRun.toFixed(2)} km</strong> (${fmtDur(runSec)} @ ${rspd.toFixed(1)} km/h)</span>
+            <span>🏃 Course : <strong style="color:var(--o)">${distRun.toFixed(2)} km</strong> (${fmtDur(runSec)} @ Cible ${rspd.toFixed(1)} km/h${avgRspdText})</span>
           </div>
         </div>
       `;
     } else {
       detailHtml = `
         <div style="margin: 8px 0; padding-top: 8px; border-top: 1px dashed var(--bd); font-size: 0.68rem; color: var(--mu); line-height: 1.45;">
-          <div>🚶 Marche : <strong style="color:var(--g)">${distWalk.toFixed(2)} km</strong> (${fmtDur(walkSec)} @ ${wspd.toFixed(1)} km/h)</div>
+          <div>🚶 Marche : <strong style="color:var(--g)">${distWalk.toFixed(2)} km</strong> (${fmtDur(walkSec)} @ Cible ${wspd.toFixed(1)} km/h${avgWspdText})</div>
         </div>
       `;
     }
