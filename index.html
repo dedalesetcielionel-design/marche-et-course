@@ -492,28 +492,57 @@ input[type=file]{display:none}
   <p style="line-height:1.6;color:var(--mu)">
     Programme spécial récupération épaule.
   </p>
+<div style="display:grid;gap:10px;margin:15px 0">
 
-  <ul style="line-height:1.9">
-    <li>✔ Pont fessier - 15 répétitions</li>
-    <li>✔ Pont fessier maintien - 10 répétitions</li>
-    <li>✔ Dead Bug simplifié - 10 par côté</li>
-    <li>✔ Relevés de genoux assis - 15 répétitions</li>
-    <li>✔ Squats contrôlés - 15 répétitions</li>
-    <li>✔ Chaise contre mur - 20 secondes</li>
-    <li>✔ Vacuum abdominal - 5 fois 10 secondes</li>
-  </ul>
+<label>
+Travail :
+<input id="abdos-work" type="number" value="40"
+style="width:80px">
+sec
+</label>
 
-  <button
-    onclick="alert('Bravo Lionel ! Séance terminée ✔')"
-    style="
-      width:100%;
-      padding:14px;
-      border:none;
-      border-radius:12px;
-      font-size:16px;
-      font-weight:bold;
-      cursor:pointer;
-    ">
+<label>
+Repos :
+<input id="abdos-rest" type="number" value="20"
+style="width:80px">
+sec
+</label>
+
+<label>
+Tours :
+<input id="abdos-rounds" type="number" value="1"
+style="width:80px">
+</label>
+
+</div>
+
+<div id="abdos-display"
+style="
+padding:20px;
+border-radius:12px;
+background:#111;
+text-align:center;
+font-size:22px;
+font-weight:bold;
+margin-top:15px;
+">
+Prêt
+</div>
+
+<button onclick="startAbdosSession()"
+style="
+width:100%;
+padding:14px;
+margin-top:15px;
+border:none;
+border-radius:12px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+">
+▶ Démarrer
+</button>
+
     ▶ Démarrer la séance
   </button>
 
@@ -1297,6 +1326,159 @@ function getWeekMon(d){const t=new Date(d);const day=t.getDay(),diff=t.getDate()
 buildDayPills();
 loadSettingsUI();
 if(Object.keys(getAllSessions()).length) document.getElementById('tab-history').classList.add('has-data');
+  /* =====================================================
+   MODULE ABDOS / FESSIERS
+===================================================== */
+
+const abdosExercises = [
+"Pont fessier",
+"Pont fessier maintien",
+"Dead Bug",
+"Relevés de genoux assis",
+"Squats contrôlés",
+"Chaise contre mur",
+"Vacuum abdominal"
+];
+
+let abdosExerciseIndex = 0;
+let abdosRound = 1;
+
+function speakAbdos(text){
+    if("speechSynthesis" in window){
+        speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = "fr-FR";
+        speechSynthesis.speak(u);
+    }
+}
+
+function startAbdosSession(){
+
+    const work =
+        parseInt(
+            document.getElementById("abdos-work").value
+        );
+
+    const rest =
+        parseInt(
+            document.getElementById("abdos-rest").value
+        );
+
+    const rounds =
+        parseInt(
+            document.getElementById("abdos-rounds").value
+        );
+
+    abdosExerciseIndex = 0;
+    abdosRound = 1;
+
+    runAbdosExercise(work, rest, rounds);
+}
+
+function runAbdosExercise(work, rest, rounds){
+
+    const display =
+        document.getElementById("abdos-display");
+
+    const exercise =
+        abdosExercises[abdosExerciseIndex];
+
+    let remaining = work;
+
+    display.innerHTML =
+        `
+        Tour ${abdosRound}/${rounds}<br>
+        Exercice ${abdosExerciseIndex+1}/${abdosExercises.length}<br><br>
+        ${exercise}<br><br>
+        ${remaining}
+        `;
+
+    speakAbdos(exercise);
+
+    const timer = setInterval(()=>{
+
+        remaining--;
+
+        display.innerHTML =
+        `
+        Tour ${abdosRound}/${rounds}<br>
+        Exercice ${abdosExerciseIndex+1}/${abdosExercises.length}<br><br>
+        ${exercise}<br><br>
+        ${remaining}
+        `;
+
+        if(remaining<=0){
+
+            clearInterval(timer);
+
+            startRest(work,rest,rounds);
+
+        }
+
+    },1000);
+}
+
+function startRest(work,rest,rounds){
+
+    const display =
+        document.getElementById("abdos-display");
+
+    let remaining = rest;
+
+    speakAbdos("Repos");
+
+    display.innerHTML =
+        `
+        Repos<br><br>
+        ${remaining}
+        `;
+
+    const timer = setInterval(()=>{
+
+        remaining--;
+
+        display.innerHTML =
+        `
+        Repos<br><br>
+        ${remaining}
+        `;
+
+        if(remaining<=0){
+
+            clearInterval(timer);
+
+            abdosExerciseIndex++;
+
+            if(
+                abdosExerciseIndex >=
+                abdosExercises.length
+            ){
+
+                abdosExerciseIndex = 0;
+                abdosRound++;
+
+                if(abdosRound > rounds){
+
+                    display.innerHTML =
+                    "🎉 Séance terminée";
+
+                    speakAbdos(
+                        "Séance terminée"
+                    );
+
+                    return;
+                }
+            }
+
+            runAbdosExercise(
+                work,
+                rest,
+                rounds
+            );
+        }
+
+    },1000);
+}
 </script>
 </body>
 </html>
