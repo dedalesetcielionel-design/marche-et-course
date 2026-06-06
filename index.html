@@ -7,16 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --g: #b6f542;      /* vert lime */
-  --o: #ff6b2b;      /* orange course */
-  --bg: #0d0d0d;
-  --s1: #161616;
-  --s2: #1e1e1e;
-  --s3: #252525;
-  --bd: #2e2e2e;
-  --tx: #f0f0f0;
-  --mu: #666;
-  --rad: 16px;
+  --g: #b6f542; --o: #ff6b2b; --bg: #0d0d0d; --s1: #161616; --s2: #1e1e1e; --s3: #252525; --bd: #2e2e2e; --tx: #f0f0f0; --mu: #666; --rad: 16px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{font-size:15px}
@@ -59,7 +50,7 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--tx);min-heig
 .set-val{font-family:'Space Mono',monospace;font-size:1.6rem;margin-bottom:8px;line-height:1}
 .set-val.gc{color:var(--g)}.set-val.oc{color:var(--o)}.set-val.ac{color:var(--g)}
 .stepper{display:flex;align-items:center;gap:6px}
-.stepper button{width:28px;height:28px;border-radius:50%;border:1px solid var(--bd);background:var(--s3);color:var(--tx);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
+.stepper button{width:28px;height:28px;border-radius:50%;border:1px solid var(--bd);background:var(--s3);color:var(--tx);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
 .stepper button:active{border-color:var(--g);color:var(--g)}
 .stepper .unit{font-size:0.65rem;color:var(--mu);flex:1;text-align:center}
 
@@ -81,28 +72,27 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--tx);min-heig
 .music-track{font-size:0.8rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .music-track.empty{color:var(--mu);font-weight:400}
 .music-btns{display:flex;gap:6px}
-.btn-load{padding:6px 12px;border-radius:8px;border:1px solid var(--bd);background:var(--s3);color:var(--tx);font-family:'Syne',sans-serif;font-size:0.72rem;font-weight:700;cursor:pointer;transition:all .15s}
-.btn-load:hover{border-color:var(--g);color:var(--g)}
-.btn-clr{padding:6px 10px;border-radius:8px;border:1px solid var(--bd);background:none;color:var(--mu);font-size:0.72rem;cursor:pointer;transition:all .15s}
+.btn-load{padding:6px 12px;border-radius:8px;border:1px solid var(--bd);background:var(--s3);color:var(--tx);font-family:'Syne',sans-serif;font-size:0.72rem;font-weight:700;cursor:pointer}
+.btn-clr{padding:6px 10px;border-radius:8px;border:1px solid var(--bd);background:none;color:var(--mu);font-size:0.72rem;cursor:pointer}
 .btn-clr:hover{border-color:#ef4444;color:#ef4444}
 .vol-row{display:flex;align-items:center;gap:8px}
-.vol-lbl{font-size:0.62rem;color:var(--mu);text-transform:uppercase;letter-spacing:1px;white-space:nowrap}
+.vol-lbl{font-size:0.62rem;color:var(--mu);text-transform:uppercase;letter-spacing:1px}
 input[type=range]{flex:1;accent-color:var(--g);height:3px;cursor:pointer}
 input[type=file]{display:none}
 
 /* ─── TIMER VIEW ─── */
 .timer-hero{background:var(--s1);border:1px solid var(--bd);border-radius:20px;padding:24px 16px;margin-bottom:12px;text-align:center;position:relative;overflow:hidden}
-.timer-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% -10%,rgba(182,245,66,.08) 0%,transparent 65%);pointer-events:none;transition:background .5s}
+.timer-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% -10%,rgba(182,245,66,.08) 0%,transparent 65%);pointer-events:none}
 .timer-hero.run-glow::before{background:radial-gradient(ellipse at 50% -10%,rgba(255,107,43,.12) 0%,transparent 65%)}
-.phase-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:50px;font-size:0.68rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;background:rgba(182,245,66,.12);color:var(--g);border:1px solid rgba(182,245,66,.25);margin-bottom:14px;transition:all .35s}
+.phase-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:50px;font-size:0.68rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;background:rgba(182,245,66,.12);color:var(--g);border:1px solid rgba(182,245,66,.25);margin-bottom:14px}
 .phase-pill.rp{background:rgba(255,107,43,.12);color:var(--o);border-color:rgba(255,107,43,.25)}
 .phase-pill .blip{width:7px;height:7px;border-radius:50%;background:currentColor;animation:blip 1s infinite}
 @keyframes blip{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.6)}}
-.timer-big{font-family:'Space Mono',monospace;font-size:clamp(3.2rem,13vw,5.5rem);letter-spacing:2px;color:var(--g);line-height:1;transition:color .35s}
+.timer-big{font-family:'Space Mono',monospace;font-size:clamp(3.2rem,13vw,5.5rem);letter-spacing:2px;color:var(--g);line-height:1}
 .timer-big.rc{color:var(--o)}
-.timer-hint{font-size:0.7rem;color:var(--mu);margin-top:6px;letter-spacing:.5px}
+.timer-hint{font-size:0.7rem;color:var(--mu);margin-top:6px}
 .prog-bar{height:3px;background:var(--bd);border-radius:2px;margin:16px 0 0;overflow:hidden}
-.prog-fill{height:100%;background:var(--g);border-radius:2px;transition:width 1s linear,background .35s}
+.prog-fill{height:100%;background:var(--g);border-radius:2px;transition:width 1s linear}
 .prog-fill.rf{background:var(--o)}
 
 /* ─── STATUS BAR ─── */
@@ -113,18 +103,15 @@ input[type=file]{display:none}
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px}
 .stat{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:12px 6px;text-align:center}
 .stat-v{font-family:'Space Mono',monospace;font-size:1.25rem;color:var(--g)}
-.stat-l{font-size:0.58rem;color:var(--mu);text-transform:uppercase;letter-spacing:0.5px;margin-top:3px}
+.stat-l{font-size:0.58rem;color:var(--mu);text-transform:uppercase;margin-top:3px}
 
 /* ─── CONTROLS ─── */
 .ctrls{display:flex;gap:8px;margin-bottom:12px}
-.btn{padding:14px 10px;border-radius:14px;border:none;font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;letter-spacing:1px;cursor:pointer;transition:all .2s;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn{padding:14px 10px;border-radius:14px;border:none;font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;letter-spacing:1px;cursor:pointer;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:6px}
 .btn-go{flex:2;background:var(--g);color:#0d0d0d}
-.btn-go:hover{filter:brightness(1.08);transform:translateY(-1px)}
 .btn-pp{flex:1.2;background:var(--s2);color:var(--tx);border:1px solid var(--bd)}
-.btn-pp:hover{border-color:var(--g)}
 .btn-sq{flex:.55;background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.2);font-size:1.1rem}
-.btn-sq:hover{background:rgba(239,68,68,.2)}
-.btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.btn:disabled{opacity:.35;cursor:not-allowed}
 
 /* ─── NOW PLAYING BAR ─── */
 .np-bar{display:none;align-items:center;gap:10px;background:var(--s2);border:1px solid var(--bd);border-radius:12px;padding:10px 14px;margin-bottom:12px}
@@ -133,50 +120,47 @@ input[type=file]{display:none}
 @keyframes spin{to{transform:rotate(360deg)}}
 .np-text{flex:1;overflow:hidden}
 .np-name{font-size:0.8rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.np-tag{font-size:0.62rem;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-top:1px}
+.np-tag{font-size:0.62rem;color:var(--mu);text-transform:uppercase;margin-top:1px}
 
 /* ─── NOTIF ─── */
-.notif{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--g);color:#0d0d0d;padding:9px 22px;border-radius:50px;font-family:'Space Mono',monospace;font-weight:700;font-size:0.82rem;letter-spacing:1px;transition:transform .3s cubic-bezier(.34,1.56,.64,1);z-index:999;white-space:nowrap;pointer-events:none}
+.notif{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--g);color:#0d0d0d;padding:9px 22px;border-radius:50px;font-family:'Space Mono',monospace;font-weight:700;font-size:0.82rem;transition:transform .3s;z-index:999;white-space:nowrap}
 .notif.show{transform:translateX(-50%) translateY(0)}
 .notif.rn{background:var(--o);color:#fff}
 
 /* ─── HISTORY VIEW ─── */
 .hist-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
 .hist-nav{display:flex;align-items:center;gap:8px}
-.hist-nav button{width:30px;height:30px;border-radius:50%;border:1px solid var(--bd);background:var(--s2);color:var(--tx);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .15s}
-.hist-nav button:hover{border-color:var(--g);color:var(--g)}
+.hist-nav button{width:30px;height:30px;border-radius:50%;border:1px solid var(--bd);background:var(--s2);color:var(--tx);cursor:pointer;display:flex;align-items:center;justify-content:center}
 .hist-period{font-family:'Space Mono',monospace;font-size:0.85rem;color:var(--g);min-width:130px;text-align:center}
 
 .month-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:14px}
-.month-grid .day-hdr{font-size:0.58rem;color:var(--mu);text-align:center;padding:4px 0;text-transform:uppercase;letter-spacing:.5px}
-.cal-day{border-radius:8px;padding:6px 3px;text-align:center;cursor:pointer;transition:all .15s;min-height:46px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:var(--s2);border:1px solid transparent}
+.month-grid .day-hdr{font-size:0.58rem;color:var(--mu);text-align:center;padding:4px 0;text-transform:uppercase}
+.cal-day{border-radius:8px;padding:6px 3px;text-align:center;cursor:pointer;min-height:46px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--s2);border:1px solid transparent}
 .cal-day.empty{background:none;border:none;cursor:default}
-.cal-day:not(.empty):hover{border-color:var(--bd)}
 .cal-day.today{border-color:var(--g)}
 .cal-day.has-walk{background:rgba(182,245,66,.08)}
 .cal-day.has-run{background:rgba(255,107,43,.08)}
+.cal-day.has-abdos{background:rgba(244,63,94,.08)} /* Couleur rose douce pour Abdos */
 .cal-day .dn{font-size:0.72rem;font-weight:700;color:var(--mu)}
-.cal-day.today .dn{color:var(--g)}
 .cal-day .dk{font-size:0.6rem;font-family:'Space Mono',monospace;color:var(--g)}
 .cal-day.has-run .dk{color:var(--o)}
+.cal-day.has-abdos .dk{color:#f43f5e}
 .cal-day .di{font-size:0.7rem}
 
 .week-row{display:grid;grid-template-columns:80px repeat(7,1fr);gap:6px;margin-bottom:6px;align-items:center}
-.week-lbl{font-size:0.6rem;color:var(--mu);text-align:right;padding-right:8px;text-transform:uppercase;letter-spacing:.5px}
-.week-day{background:var(--s2);border:1px solid var(--bd);border-radius:10px;padding:10px 6px;text-align:center;transition:all .15s;cursor:pointer}
-.week-day:hover{border-color:var(--g)}
-.week-day.today{border-color:var(--g)}
-.week-day .wd-name{font-size:0.6rem;color:var(--mu);text-transform:uppercase;letter-spacing:.5px}
+.week-lbl{font-size:0.6rem;color:var(--mu);text-align:right;padding-right:8px;text-transform:uppercase}
+.week-day{background:var(--s2);border:1px solid var(--bd);border-radius:10px;padding:10px 6px;text-align:center}
+.week-day .wd-name{font-size:0.6rem;color:var(--mu);text-transform:uppercase}
 .week-day .wd-km{font-family:'Space Mono',monospace;font-size:0.85rem;color:var(--g);margin-top:2px}
 .week-day .wd-ico{font-size:0.75rem;margin-top:2px}
 
 .summary-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
 .sum-box{background:var(--s2);border:1px solid var(--bd);border-radius:12px;padding:12px;text-align:center}
 .sum-v{font-family:'Space Mono',monospace;font-size:1.3rem;color:var(--g)}
-.sum-l{font-size:0.6rem;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-top:3px}
+.sum-l{font-size:0.6rem;color:var(--mu);text-transform:uppercase;margin-top:3px}
 
 .hist-view-toggle{display:flex;gap:6px;margin-bottom:14px}
-.hvt-btn{padding:7px 14px;border-radius:8px;border:1px solid var(--bd);background:var(--s2);color:var(--mu);font-family:'Syne',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.hvt-btn{padding:7px 14px;border-radius:8px;border:1px solid var(--bd);background:var(--s2);color:var(--mu);font-family:'Syne',sans-serif;font-size:0.7rem;font-weight:700;text-transform:uppercase;cursor:pointer}
 .hvt-btn.on{border-color:var(--g);color:var(--g);background:rgba(182,245,66,.07)}
 
 .session-card{background:var(--s2);border:1px solid var(--bd);border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
@@ -185,7 +169,7 @@ input[type=file]{display:none}
 .sc-date{font-size:0.72rem;color:var(--mu);margin-bottom:2px}
 .sc-stats{font-family:'Space Mono',monospace;font-size:0.85rem;color:var(--g)}
 .sc-sub{font-size:0.65rem;color:var(--mu);margin-top:2px}
-.sc-del{width:26px;height:26px;border-radius:50%;border:1px solid var(--bd);background:none;color:var(--mu);cursor:pointer;font-size:0.8rem;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.sc-del{width:26px;height:26px;border-radius:50%;border:1px solid var(--bd);background:none;color:var(--mu);cursor:pointer;font-size:0.8rem;display:flex;align-items:center;justify-content:center}
 .sc-del:hover{border-color:#ef4444;color:#ef4444}
 .no-data{text-align:center;color:var(--mu);font-size:0.82rem;padding:24px;border:1px dashed var(--bd);border-radius:12px}
 
@@ -194,18 +178,13 @@ input[type=file]{display:none}
 .iv-w{background:var(--g);border-radius:2px;flex-shrink:0}
 .iv-r{background:var(--o);border-radius:2px;flex-shrink:0}
 
-.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:50px;font-size:0.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:50px;font-size:0.6rem;font-weight:700;text-transform:uppercase}
 .badge-w{background:rgba(182,245,66,.12);color:var(--g);border:1px solid rgba(182,245,66,.2)}
 .badge-r{background:rgba(255,107,43,.12);color:var(--o);border:1px solid rgba(255,107,43,.2)}
 
 /* ─── MODAL SPECIFIQUE D'INSTRUCTION ABDOS ─── */
-@keyframes spin-slow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-.modal-spin {
-  animation: spin-slow 12s linear infinite;
-}
+@keyframes spin-slow {from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.modal-spin {animation:spin-slow 12s linear infinite}
 </style>
 </head>
 <body>
@@ -333,7 +312,7 @@ input[type=file]{display:none}
       <div class="set-box full">
         <div class="set-lbl" style="display:flex; justify-content:space-between; align-items:center;">
           <span>📏 Distance cible</span>
-          <span id="settingsPctLabel" style="color:var(--g); font-size:0.6rem; text-transform:none; letter-spacing:0.5px;"></span>
+          <span id="settingsPctLabel" style="color:var(--g); font-size:0.6rem; text-transform:none;"></span>
         </div>
         <div class="set-val ac" id="sv-dist">5.0 km</div>
         <div class="stepper">
@@ -400,9 +379,7 @@ input[type=file]{display:none}
   <div class="section">
     <div class="sec-title"><em>ℹ</em> Comment ça marche</div>
     <p style="font-size:0.78rem;color:var(--mu);line-height:1.6">
-      Charge un fichier audio depuis ton appareil pour chaque phase.
-      La musique <strong style="color:var(--tx)">change automatiquement</strong> quand tu passes d'un état à l'autre.
-      Les fichiers ne sont <strong style="color:var(--tx)">pas sauvegardés</strong> entre les sessions — recharge-les à chaque ouverture.
+      Charge un fichier audio depuis ton appareil pour chaque phase. La musique change automatiquement. Les fichiers ne sont pas sauvegardés en local.
     </p>
   </div>
 
@@ -412,9 +389,7 @@ input[type=file]{display:none}
     <div class="music-zone" id="mz-walk">
       <div class="music-top">
         <span class="music-emoji">🎵</span>
-        <div class="music-info">
-          <div class="music-track empty" id="mt-walk">Aucun fichier chargé</div>
-        </div>
+        <div class="music-info"><div class="music-track empty" id="mt-walk">Aucun fichier</div></div>
         <div class="music-btns">
           <button class="btn-load" onclick="document.getElementById('fi-walk').click()">📂 Choisir</button>
           <button class="btn-clr" onclick="clearAudio('walk')">✕</button>
@@ -435,9 +410,7 @@ input[type=file]{display:none}
     <div class="music-zone" id="mz-run">
       <div class="music-top">
         <span class="music-emoji">🎶</span>
-        <div class="music-info">
-          <div class="music-track empty" id="mt-run">Aucun fichier chargé</div>
-        </div>
+        <div class="music-info"><div class="music-track empty" id="mt-run">Aucun fichier</div></div>
         <div class="music-btns">
           <button class="btn-load" onclick="document.getElementById('fi-run').click()">📂 Choisir</button>
           <button class="btn-clr" onclick="clearAudio('run')">✕</button>
@@ -458,9 +431,7 @@ input[type=file]{display:none}
     <div class="music-zone" id="mz-abdosWork">
       <div class="music-top">
         <span class="music-emoji">🎵</span>
-        <div class="music-info">
-          <div class="music-track empty" id="mt-abdosWork">Aucun fichier chargé</div>
-        </div>
+        <div class="music-info"><div class="music-track empty" id="mt-abdosWork">Aucun fichier</div></div>
         <div class="music-btns">
           <button class="btn-load" onclick="document.getElementById('fi-abdosWork').click()">📂 Choisir</button>
           <button class="btn-clr" onclick="clearAudio('abdosWork')">✕</button>
@@ -481,9 +452,7 @@ input[type=file]{display:none}
     <div class="music-zone" id="mz-abdosRest">
       <div class="music-top">
         <span class="music-emoji">🎶</span>
-        <div class="music-info">
-          <div class="music-track empty" id="mt-abdosRest">Aucun fichier chargé</div>
-        </div>
+        <div class="music-info"><div class="music-track empty" id="mt-abdosRest">Aucun fichier</div></div>
         <div class="music-btns">
           <button class="btn-load" onclick="document.getElementById('fi-abdosRest').click()">📂 Choisir</button>
           <button class="btn-clr" onclick="clearAudio('abdosRest')">✕</button>
@@ -521,7 +490,7 @@ input[type=file]{display:none}
       <div class="hist-period" id="histPeriodLabel">—</div>
       <button onclick="navPeriod(1)">›</button>
     </div>
-    <button onclick="navPeriod(0)" style="padding:6px 12px;border-radius:8px;border:1px solid var(--bd);background:var(--s2);color:var(--mu);font-family:'Syne',sans-serif;font-size:0.68rem;font-weight:700;cursor:pointer;letter-spacing:1px">AUJOURD'HUI</button>
+    <button onclick="navPeriod(0)" style="padding:6px 12px;border-radius:8px;border:1px solid var(--bd);background:var(--s2);color:var(--mu);font-family:'Syne',sans-serif;font-size:0.68rem;font-weight:700;cursor:pointer">AUJOURD'HUI</button>
   </div>
 
   <!-- Résumé -->
@@ -543,10 +512,32 @@ input[type=file]{display:none}
 <div class="view" id="view-abdos">
 <div class="wrap">
 
+  <!-- Tableau de Motivation & d'Assiduité (Nouveau Bloc 3) -->
+  <div class="section" style="background:var(--s2); border-color:var(--bd); padding:12px 14px; margin-bottom:12px;">
+    <div class="sec-title" style="margin-bottom:8px; color:var(--o);"><em>🔥</em> Motivation & Assiduité</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+      <div style="background:rgba(255,255,255,0.02); border:1px solid var(--bd); padding:8px; border-radius:8px; text-align:center;">
+        <div style="font-size:0.6rem; color:var(--mu); text-transform:uppercase;">Total Séances</div>
+        <div id="abdos-total-sess" style="font-family:'Space Mono',monospace; font-size:1.4rem; color:var(--g); font-weight:700;">0</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.02); border:1px solid var(--bd); padding:8px; border-radius:8px; text-align:center;">
+        <div style="font-size:0.6rem; color:var(--mu); text-transform:uppercase;">Dernière Séance</div>
+        <div id="abdos-last-date" style="font-size:0.75rem; color:var(--tx); font-weight:700; margin-top:6px;">Aucune</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.02); border:1px solid var(--bd); padding:8px; border-radius:8px; text-align:center;">
+        <div style="font-size:0.6rem; color:var(--mu); text-transform:uppercase;">Série Actuelle</div>
+        <div id="abdos-streak-curr" style="font-family:'Space Mono',monospace; font-size:1.4rem; color:var(--o); font-weight:700;">0 🔥</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.02); border:1px solid var(--bd); padding:8px; border-radius:8px; text-align:center;">
+        <div style="font-size:0.6rem; color:var(--mu); text-transform:uppercase;">Meilleure Série</div>
+        <div id="abdos-streak-best" style="font-family:'Space Mono',monospace; font-size:1.4rem; color:var(--g); font-weight:700;">0 👑</div>
+      </div>
+    </div>
+  </div>
+
   <div class="section">
     <div class="sec-title"><em>🍑</em> Programme Médical Évolutif</div>
     
-    <!-- Choix du circuit / niveau -->
     <label style="font-size:0.75rem; color:var(--mu); display:block; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Sélectionner votre niveau :</label>
     <select id="abdos-preset" onchange="selectAbdosPreset(this.value)" style="width:100%; padding:10px; background:var(--s2); border:1px solid var(--bd); color:var(--tx); border-radius:8px; font-family:'Syne',sans-serif; font-size:0.85rem; margin-bottom:12px;">
       <option value="n1-c1">Niveau 1 - Circuit 1 (Rééducation Active - Initial)</option>
@@ -596,19 +587,16 @@ input[type=file]{display:none}
 ═══════════════════════════════════════════════════ -->
 <div id="exerciseModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:9999; align-items:center; justify-content:center; padding:16px; animation:fadeIn 0.2s ease;">
   <div style="background:var(--s1); border:1px solid var(--bd); border-radius:20px; width:100%; max-width:400px; padding:20px; position:relative;">
-    <button onclick="closeExerciseModal()" style="position:absolute; top:12px; right:12px; width:30px; height:30px; border-radius:50%; border:1px solid var(--bd); background:var(--s2); color:var(--tx); cursor:pointer; font-size:1.1rem; display:flex; align-items:center; justify-content:center; transition:all 0.15s;">✕</button>
+    <button onclick="closeExerciseModal()" style="position:absolute; top:12px; right:12px; width:30px; height:30px; border-radius:50%; border:1px solid var(--bd); background:var(--s2); color:var(--tx); cursor:pointer; font-size:1.1rem; display:flex; align-items:center; justify-content:center;">✕</button>
     
-    <!-- Zone d'illustration dynamique animée en SVG -->
     <div id="modalVisualContainer" style="width:100%; display:flex; justify-content:center; align-items:center; margin-bottom:15px; height:120px; background:rgba(0,0,0,0.2); border-radius:12px; border:1px solid var(--bd); overflow:hidden;"></div>
     
     <h3 id="modalTitle" style="font-size:1.2rem; text-align:center; color:var(--g); margin-bottom:14px; font-weight:800;">Nom de l'exercice</h3>
     
     <div style="font-size:0.85rem; color:var(--tx); line-height:1.6; max-height:240px; overflow-y:auto; margin-bottom:14px; padding-right:4px;">
-      <strong style="color:var(--mu); font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:6px;">Consignes d'exécution :</strong>
-      <ol id="modalSteps" style="margin-left:20px; margin-top:4px; margin-bottom:14px; display:grid; gap:6px;">
-      </ol>
-      <div id="modalTips" style="background:rgba(255,107,43,0.08); border:1px solid rgba(255,107,43,0.25); color:var(--o); padding:10px; border-radius:8px; font-size:0.75rem; line-height:1.45;">
-      </div>
+      <strong style="color:var(--mu); font-size:0.75rem; text-transform:uppercase; display:block; margin-bottom:6px;">Consignes d'exécution :</strong>
+      <ol id="modalSteps" style="margin-left:20px; margin-top:4px; margin-bottom:14px; display:grid; gap:6px;"></ol>
+      <div id="modalTips" style="background:rgba(255,107,43,0.08); border:1px solid rgba(255,107,43,0.25); color:var(--o); padding:10px; border-radius:8px; font-size:0.75rem; line-height:1.45;"></div>
     </div>
   </div>
 </div>
@@ -620,20 +608,16 @@ input[type=file]{display:none}
 const DAYS_FR = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
 const MONTHS_FR = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
 
-function todayDayIndex() { // 0=Lun
+function todayDayIndex() {
   const d = new Date().getDay();
   return d === 0 ? 6 : d - 1;
 }
-
 let currentDay = todayDayIndex();
 
 const defDay = () => ({
-  walkSec: 120, runSec: 60,
-  distKm: 5, wspd: 5.0, rspd: 10.0,
-  sound: true, loop: true, useGps: false, mode: 'both'
+  walkSec: 120, runSec: 60, distKm: 5, wspd: 5.0, rspd: 10.0, sound: true, loop: true, useGps: false, mode: 'both'
 });
 
-// Load day settings (per weekday, 0–6)
 let daySettings = {};
 for (let i = 0; i < 7; i++) {
   try { daySettings[i] = JSON.parse(localStorage.getItem('mc3_ds_'+i)) || defDay(); }
@@ -642,7 +626,6 @@ for (let i = 0; i < 7; i++) {
   if (daySettings[i].useGps === undefined) daySettings[i].useGps = false;
 }
 
-// Sessions stored by date string YYYY-MM-DD
 function getAllSessions() {
   try { return JSON.parse(localStorage.getItem('mc3_sessions')) || {}; } catch { return {}; }
 }
@@ -778,7 +761,6 @@ function updateTimerBanner() {
   document.getElementById('modeBannerTxt').style.color = isWalkMode ? 'var(--g)' : 'var(--o)';
   document.getElementById('targetBannerTxt').textContent = 'Objectif : '+s.distKm.toFixed(1)+' km';
   
-  // Mise à jour de l'indicateur GPS
   const indicator = document.getElementById('gpsIndicator');
   if (s.useGps) {
     indicator.textContent = '📡 GPS Sélectionné';
@@ -801,7 +783,6 @@ function updateWalkRunStats() {
     rPct = 100 - wPct;
   }
   
-  // Mise à jour des pourcentages et vitesses dans la boîte du Timer
   document.getElementById('infoWalkPct').textContent = `${wPct}%`;
   document.getElementById('infoRunPct').textContent = `${rPct}%`;
   document.getElementById('infoWalkSpeed').textContent = `${s.wspd.toFixed(1)} km/h`;
@@ -812,7 +793,6 @@ function updateWalkRunStats() {
     infoRunBlock.style.opacity = isWalkMode ? '0.2' : '1';
   }
   
-  // Étiquette de pourcentage dans la prévisualisation des Réglages
   const settingsPctLabel = document.getElementById('settingsPctLabel');
   if (settingsPctLabel) {
     settingsPctLabel.textContent = isWalkMode ? '🚶 100% Marche' : `🚶 ${wPct}% Marche / 🏃 ${rPct}% Course`;
@@ -823,14 +803,11 @@ function updateWalkRunStats() {
 //  AUDIO
 // ════════════════════════════════════════════════
 const aud = { 
-  walk: new Audio(), 
-  run: new Audio(),
-  abdosWork: new Audio(),
-  abdosRest: new Audio()
+  walk: new Audio(), run: new Audio(), abdosWork: new Audio(), abdosRest: new Audio()
 };
 aud.walk.loop = aud.run.loop = aud.abdosWork.loop = aud.abdosRest.loop = true;
 aud.walk.volume = 0.8; aud.run.volume = 0.9;
-aud.abdosWork.volume = 0.8; aud.abdosRest.volume = 0.6; // Plus doux pour les phases de repos
+aud.abdosWork.volume = 0.8; aud.abdosRest.volume = 0.6;
 
 const audName = { walk:'', run:'', abdosWork:'', abdosRest:'' };
 const audLoaded = { walk:false, run:false, abdosWork:false, abdosRest:false };
@@ -930,7 +907,6 @@ function startGpsTracking() {
       const s = daySettings[currentDay];
       const walkOnly = s.mode==='walk';
       
-      // On élargit la tolérance de précision à 50m (au lieu de 25m qui était trop restrictif)
       if (coords.accuracy > 50) {
         indicator.textContent = `📡 Précision faible (${Math.round(coords.accuracy)}m)`;
         return;
@@ -941,7 +917,6 @@ function startGpsTracking() {
           lastGpsCoords.latitude, lastGpsCoords.longitude,
           coords.latitude, coords.longitude
         );
-        // Filtrage de cohérence physique (max 150m par mise à jour de position pour éviter les sauts absurdes)
         if (d > 0 && d < 0.15) { 
           dist += d;
           if (isWalk || walkOnly) {
@@ -952,14 +927,12 @@ function startGpsTracking() {
         }
       }
       lastGpsCoords = coords;
-      lastGpsTimestamp = Date.now(); // Mémorise l'instant du dernier signal valide reçu
+      lastGpsTimestamp = Date.now();
       
-      // Mise à jour de la vitesse GPS réelle
       if (coords.speed !== null && coords.speed !== undefined) {
-        const currentGpsSpeed = coords.speed * 3.6; // Converti m/s en km/h
+        const currentGpsSpeed = coords.speed * 3.6;
         document.getElementById('sSpeed').textContent = currentGpsSpeed.toFixed(1);
       } else {
-        // Fallback si la puce GPS ne renvoie pas la vitesse instantanée brute
         const estSpeed = (isWalk || walkOnly) ? s.wspd : s.rspd;
         document.getElementById('sSpeed').textContent = estSpeed.toFixed(1);
       }
@@ -985,7 +958,7 @@ function stopGpsTracking() {
 }
 
 function calculateGpsDistance(lat1, lon1, lat2, lon2) {
-  const R = 6371; // Rayon de la terre en km
+  const R = 6371;
   const dLat = (lat2 - lat1) * Math.PI / 180;
   const dLon = (lon2 - lon1) * Math.PI / 180;
   const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
@@ -1020,7 +993,6 @@ function startSession() {
     } else {
       clearInterval(startTimer);
       
-      // Lancement réel de la séance
       running=true;paused=false;elapsed=0;phaseTime=0;cycles=0;dist=0;distWalk=0;distRun=0;timeWalk=0;timeRun=0;isWalk=true;sessStart=new Date();
       lastGpsTimestamp = Date.now();
       document.getElementById('btnPP').disabled=false;
@@ -1089,7 +1061,6 @@ function saveSessionRecord() {
   const all = getAllSessions();
   if(!all[dateKey]) all[dateKey]=[];
   
-  // Calcul des vitesses réelles moyennes de marche et de course (vitesse = distance / temps en heures)
   let avgWspd = timeWalk > 0 ? (distWalk / (timeWalk / 3600)) : 0;
   let avgRspd = timeRun > 0 ? (distRun / (timeRun / 3600)) : 0;
   
@@ -1099,14 +1070,12 @@ function saveSessionRecord() {
     dist: +dist.toFixed(3),
     cycles,
     mode: s.mode,
-    // Nouveaux indicateurs sauvegardés pour le suivi de la progression
     walkSec: s.walkSec,
     runSec: s.mode === 'both' ? s.runSec : 0,
     wspd: s.wspd,
     rspd: s.mode === 'both' ? s.rspd : 0,
     distWalk: +distWalk.toFixed(3),
     distRun: s.mode === 'both' ? +distRun.toFixed(3) : 0,
-    // Vitesses réelles moyennes calculées
     avgWspd: +avgWspd.toFixed(1),
     avgRspd: s.mode === 'both' ? +avgRspd.toFixed(1) : 0
   });
@@ -1121,14 +1090,12 @@ function tick() {
   const walkOnly = s.mode==='walk';
   const pd = (isWalk||walkOnly)?s.walkSec:s.runSec;
   
-  // Incrémenter le temps passé dans chaque phase (marche ou course)
   if (isWalk || walkOnly) {
     timeWalk++;
   } else {
     timeRun++;
   }
   
-  // Si le GPS n'est pas activé, on calcule sur la vitesse estimée
   if (!s.useGps) {
     const currentSpeed = (isWalk || walkOnly) ? s.wspd : s.rspd;
     const spd = currentSpeed/3600;
@@ -1140,7 +1107,6 @@ function tick() {
     }
     document.getElementById('sSpeed').textContent = currentSpeed.toFixed(1);
   } else {
-    // Mode GPS extérieur : surveillance active de la réception du signal
     const timeSinceLastGps = (Date.now() - lastGpsTimestamp) / 1000;
     const indicator = document.getElementById('gpsIndicator');
     if (timeSinceLastGps > 15) {
@@ -1156,7 +1122,6 @@ function tick() {
   document.getElementById('sTime').textContent=fmtSec(elapsed);
   document.getElementById('sCyc').textContent=cycles;
   
-  // 1. Désactivation des bips intermédiaires de décompte en mode Marche Seule
   if(!walkOnly && rem<=3 && rem>0) beep(580+rem*40,.1);
   
   if(phaseTime>=pd){
@@ -1169,8 +1134,6 @@ function tick() {
     }
     else{
       cycles++;
-      // 2. Désactivation du bip de fin de phase de 2 min en mode Marche Seule
-      // beep(440,.2);
     }
     phaseTime=0;
     setPhaseUI(isWalk||walkOnly);
@@ -1226,7 +1189,7 @@ function renderHistory(){
     else renderList(all);
   } catch(e) {
     console.error("Erreur globale dans renderHistory :", e);
-    document.getElementById('histContent').innerHTML = `<div class="no-data">Erreur de structure dans les données sauvegardées.</div>`;
+    document.getElementById('histContent').innerHTML = `<div class="no-data">Erreur de structure dans les données.</div>`;
   }
 }
 
@@ -1235,12 +1198,11 @@ function renderMonth(all){
     const y=histRef.getFullYear(), m=histRef.getMonth();
     const labelEl = document.getElementById('histPeriodLabel');
     if (labelEl) labelEl.textContent=MONTHS_FR[m]+' '+y;
-    const first=new Date(y,m,1).getDay(); // 0=Sun
+    const first=new Date(y,m,1).getDay();
     const firstMon=first===0?6:first-1;
     const daysInMonth=new Date(y,m+1,0).getDate();
     const today=new Date();
 
-    // Calcul du résumé sécurisé
     let totKm=0,totSess=0,totSec=0;
     for(let d=1;d<=daysInMonth;d++){
       const k=toDateKey(new Date(y,m,d));
@@ -1265,22 +1227,27 @@ function renderMonth(all){
       const km=sess.reduce((a,s)=>a + (s ? (s.dist || 0) : 0), 0);
       const isToday=dt.toDateString()===today.toDateString();
       const hasRun=sess.some(s=>s && s.mode==='both');
-      const hasWalk=sess.length>0;
-      html+=`<div class="cal-day${isToday?' today':''}${hasRun?' has-run':hasWalk?' has-walk':''}" onclick="showDaySessions('${k}')">
+      const hasAbdos=sess.some(s=>s && (s.type==='abdos' || s.mode==='abdos'));
+      const hasWalk=sess.length>0 && !hasRun && !hasAbdos;
+      
+      let dayClass = '';
+      if (hasRun) dayClass = 'has-run';
+      else if (hasAbdos) dayClass = 'has-abdos';
+      else if (hasWalk) dayClass = 'has-walk';
+
+      html+=`<div class="cal-day${isToday?' today':''}${dayClass?' '+dayClass:''}" onclick="showDaySessions('${k}')">
         <span class="dn" style="color:${isToday?'var(--g)':'var(--tx)'}">${d}</span>
         ${km>0?`<span class="dk">${km.toFixed(1)}</span>`:''}
-        ${sess.length>0?`<span class="di">${hasRun?'🏃':'🚶'}</span>`:''}
+        ${sess.length>0?`<span class="di">${hasRun?'🏃':hasAbdos?'🍑':'🚶'}</span>`:''}
       </div>`;
     }
     html+='</div>';
 
-    // Day detail placeholder
     html+='<div id="dayDetail"></div>';
     const contentEl = document.getElementById('histContent');
     if (contentEl) contentEl.innerHTML=html;
   } catch(err) {
     console.error("Erreur de rendu dans renderMonth :", err);
-    document.getElementById('histContent').innerHTML = `<div class="no-data">Impossible de générer le calendrier.</div>`;
   }
 }
 
@@ -1319,12 +1286,20 @@ function renderWeek(all){
         const km=sess.reduce((a,s)=>a + (s ? (s.dist || 0) : 0), 0);
         const isToday=dt.toDateString()===today.toDateString();
         const hasRun=sess.some(s=>s && s.mode==='both');
+        const hasAbdos=sess.some(s=>s && (s.type==='abdos' || s.mode==='abdos'));
+        const hasWalk=sess.length>0 && !hasRun && !hasAbdos;
         totKm+=km;totSess+=sess.length;
         sess.forEach(s=>{ if(s) totSec+=(s.dur||0); });
-        html+=`<div class="week-day${isToday?' today':''}" onclick="showDayDetail('${k}','wkd')">
+        
+        let weekClass = '';
+        if (hasRun) weekClass = 'has-run';
+        else if (hasAbdos) weekClass = 'has-abdos';
+        else if (hasWalk) weekClass = 'has-walk';
+
+        html+=`<div class="week-day${isToday?' today':''}${weekClass?' '+weekClass:''}" onclick="showDayDetail('${k}','wkd')">
           <div class="wd-name">${DAYS_FR[i]}</div>
           <div class="wd-km">${km>0?km.toFixed(1):'—'}</div>
-          <div class="wd-ico">${sess.length?(hasRun?'🏃':'🚶'):''}</div>
+          <div class="wd-ico">${sess.length?(hasRun?'🏃':hasAbdos?'🍑':'🚶'):''}</div>
         </div>`;
       }
       html+='</div>';
@@ -1390,8 +1365,25 @@ function renderList(all){
 }
 
 function sessionCard(s,dateKey,idx){
-  const hasDetails = s.walkSec !== undefined;
+  const isAbdos = s.type === 'abdos' || s.mode === 'abdos';
   
+  if (isAbdos) {
+    return `<div class="session-card" style="border-color: rgba(244,63,94,0.3);">
+      <span class="sc-ico" style="color: #f43f5e;">🍑</span>
+      <div class="sc-info">
+        <div class="sc-date">${s.time}</div>
+        <div class="sc-stats" style="color: #f43f5e;">Abdos/Fessiers · ${fmtSec(s.dur || 0)}</div>
+        <div style="margin: 8px 0; padding-top: 8px; border-top: 1px dashed var(--bd); font-size: 0.68rem; color: var(--mu); line-height: 1.45;">
+          <div>🎯 Programme : <strong style="color:var(--tx)">${s.preset || 'Programme personnalisé'}</strong></div>
+          <div>🔁 Effort : <strong>${s.rounds || s.cycles || 0} tours</strong> terminés</div>
+        </div>
+        <div class="sc-sub"><span class="badge" style="background:rgba(244,63,94,0.12); color:#f43f5e; border:1px solid rgba(244,63,94,0.25);">renforcement</span></div>
+      </div>
+      <button class="sc-del" onclick="deleteSession('${dateKey}',${idx})" title="Supprimer">✕</button>
+    </div>`;
+  }
+
+  const hasDetails = s.walkSec !== undefined;
   const walkSec = s.walkSec || 120;
   const runSec = s.runSec || 60;
   const wspd = s.wspd || 5.0;
@@ -1399,7 +1391,6 @@ function sessionCard(s,dateKey,idx){
   const distWalk = s.distWalk !== undefined ? s.distWalk : (s.mode === 'walk' ? (s.dist || 0) : (s.dist || 0) * 0.6);
   const distRun = s.distRun !== undefined ? s.distRun : (s.mode === 'walk' ? 0 : (s.dist || 0) * 0.4);
   
-  // Vitesses réelles enregistrées (nouveau format)
   const avgWspd = s.avgWspd !== undefined ? s.avgWspd : null;
   const avgRspd = s.avgRspd !== undefined ? s.avgRspd : null;
 
@@ -1444,7 +1435,9 @@ function deleteSession(dateKey,idx){
   if(!confirm('Supprimer cette session ?'))return;
   const all=getAllSessions() || {};
   if(all[dateKey]){all[dateKey].splice(idx,1);if(!all[dateKey].length)delete all[dateKey];}
-  saveSessions(all);renderHistory();
+  saveSessions(all);
+  renderHistory();
+  calculateAbdosStreaks(); // Recalcule les scores d'assiduité après suppression
 }
 
 function setSummary(km,sess,sec){
@@ -1525,7 +1518,6 @@ const abdosPresets = {
   }
 };
 
-// Base de connaissances visuelles (illustrations textuelles et consignes médicales sécurisées)
 const exerciseVisuals = {
   "Squats au poids du corps": {
     emoji: "🍑",
@@ -1735,6 +1727,8 @@ let abdosInRest = false;
 let abdosWorkTime = 30;
 let abdosRestTime = 30;
 let abdosTotalRounds = 3;
+let abdosSessStart = null;
+let abdosSessionDuration = 0;
 
 function speakAbdos(text){
   if("speechSynthesis" in window){
@@ -1753,7 +1747,6 @@ function selectAbdosPreset(key) {
   document.getElementById("abdos-rest").value = p.rest;
   document.getElementById("abdos-rounds").value = p.rounds;
   
-  // Remplissage du tableau d'exercices
   abdosExercises.length = 0;
   p.exercises.forEach(ex => abdosExercises.push(ex));
   
@@ -1770,14 +1763,12 @@ function updatePresetPreview() {
     }).join('') + `</div>`;
 }
 
-// Ouvre la boîte modale des consignes
 function showExerciseDetails(name) {
   const ex = exerciseVisuals[name];
   if (!ex) return;
 
   document.getElementById("modalTitle").textContent = name;
   
-  // Génère et insère le graphique dynamique vectoriel de dessin animé
   const container = document.getElementById("modalVisualContainer");
   if (container) {
     container.innerHTML = getExerciseSVG(name);
@@ -1792,264 +1783,32 @@ function showExerciseDetails(name) {
   modal.style.display = "flex";
 }
 
-// Génère une animation stylisée "dessin animé 2D" en SVG/CSS avec dégradés et textures
 function getExerciseSVG(name) {
   const lower = name.toLowerCase();
   
-  if (lower.includes("squat")) {
+  if (lower.includes("mur") || lower.includes("debout contre")) {
     return `
       <svg viewBox="0 0 100 100" width="120" height="120">
-        <defs>
-          <linearGradient id="skin" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#ffedd5" />
-            <stop offset="100%" stop-color="#fed7aa" />
-          </linearGradient>
-          <linearGradient id="jersey" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#d4ff5e" />
-            <stop offset="100%" stop-color="#80b300" />
-          </linearGradient>
-          <radialGradient id="shadow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="rgba(0,0,0,0.6)" />
-            <stop offset="100%" stop-color="rgba(0,0,0,0)" />
-          </radialGradient>
-        </defs>
-        <!-- Ombre au sol dynamique -->
-        <ellipse cx="50" cy="85" rx="25" ry="5" fill="url(#shadow)" style="animation: squat-shadow-scale 2.5s ease-in-out infinite;"/>
-        
-        <!-- Personnage -->
-        <g style="transform-origin: 50px 85px; animation: body-bend 2.5s ease-in-out infinite;">
-          <!-- Cuisse -->
-          <line x1="45" y1="55" x2="65" y2="70" stroke="#252525" stroke-width="8" stroke-linecap="round" />
-          
-          <!-- Buste -->
-          <g style="transform-origin: 45px 55px; animation: torso-lean 2.5s ease-in-out infinite;">
-            <!-- Maillot dégradé -->
-            <path d="M 40 30 L 50 30 L 45 55 L 35 55 Z" fill="url(#jersey)" stroke="#80b300" stroke-width="1.5" stroke-linejoin="round"/>
-            <!-- Tête -->
-            <circle cx="45" cy="20" r="8" fill="url(#skin)"/>
-            <!-- Casquette orange -->
-            <path d="M 38 18 C 38 10, 52 10, 52 18 Z" fill="#ff6b2b"/> 
-            <!-- Bras croisé -->
-            <path d="M 42 35 Q 30 40 45 45" fill="none" stroke="url(#skin)" stroke-width="6" stroke-linecap="round"/>
-          </g>
-          <!-- Mollet -->
-          <line x1="65" y1="70" x2="55" y2="85" stroke="#f0f0f0" stroke-width="8" stroke-linecap="round" />
+        <line x1="10" y1="85" x2="90" y2="85" stroke="var(--bd)" stroke-width="3" stroke-linecap="round"/>
+        <line x1="30" y1="15" x2="30" y2="85" stroke="var(--bd)" stroke-width="3"/>
+        <g style="animation: wall-plank-shake 0.15s linear infinite alternate;">
+          <circle cx="70" cy="80" r="4" fill="#252525"/>
+          <line x1="70" y1="80" x2="48" y2="45" stroke="#f0f0f0" stroke-width="8" stroke-linecap="round"/>
+          <path d="M 48 45 L 38 29 Z" fill="#b6f542"/>
+          <circle cx="38" cy="20" r="7" fill="#fed7aa"/>
         </g>
-        <style>
-          @keyframes body-bend {
-            0%, 100% { transform: translateY(0) scaleY(1); }
-            50% { transform: translateY(18px) scaleY(0.68); }
-          }
-          @keyframes torso-lean {
-            0%, 100% { transform: rotate(0deg); }
-            50% { transform: rotate(15deg); }
-          }
-          @keyframes squat-shadow-scale {
-            0%, 100% { rx: 25; ry: 5; opacity: 0.6; }
-            50% { rx: 33; ry: 7; opacity: 0.9; }
-          }
-        </style>
+        <style>@keyframes wall-plank-shake { 0% { transform: translate(0.5px, 0); } 100% { transform: translate(-0.5px, 0.5px); } }</style>
       </svg>
     `;
   }
-  
-  if (lower.includes("pont") || lower.includes("bridge")) {
-    return `
-      <svg viewBox="0 0 100 100" width="120" height="120">
-        <defs>
-          <linearGradient id="skin" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#ffedd5" />
-            <stop offset="100%" stop-color="#fed7aa" />
-          </linearGradient>
-          <linearGradient id="jersey" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#d4ff5e" />
-            <stop offset="100%" stop-color="#80b300" />
-          </linearGradient>
-          <radialGradient id="shadow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="rgba(0,0,0,0.6)" />
-            <stop offset="100%" stop-color="rgba(0,0,0,0)" />
-          </radialGradient>
-        </defs>
-        <!-- Tapis de sol bleu -->
-        <line x1="5" y1="80" x2="95" y2="80" stroke="#1d4ed8" stroke-width="4" stroke-linecap="round"/>
-        <!-- Ombre sous le bassin qui bouge -->
-        <ellipse cx="53" cy="80" rx="16" ry="4" fill="url(#shadow)" style="animation: bridge-shadow 2.5s ease-in-out infinite;"/>
-        
-        <!-- Tête et Casquette -->
-        <circle cx="25" cy="73" r="7" fill="url(#skin)"/>
-        <path d="M 21 67 C 21 61, 29 61, 29 67 Z" fill="#ff6b2b"/>
-        
-        <!-- Corps articulé -->
-        <g style="transform-origin: 32px 75px; animation: bridge-rotate 2.5s ease-in-out infinite;">
-          <!-- Maillot -->
-          <path d="M 32 75 L 55 75 L 55 60 L 32 60 Z" fill="url(#jersey)" stroke="#80b300" stroke-width="1.5" stroke-linejoin="round"/>
-          <!-- Short -->
-          <line x1="55" y1="67" x2="72" y2="67" stroke="#252525" stroke-width="8" stroke-linecap="round"/>
-          <!-- Mollet -->
-          <line x1="72" y1="67" x2="72" y2="80" stroke="#f0f0f0" stroke-width="8" stroke-linecap="round"/>
-        </g>
-        <style>
-          @keyframes bridge-rotate {
-            0%, 100% { transform: rotate(0deg); }
-            50% { transform: rotate(-22deg); }
-          }
-          @keyframes bridge-shadow {
-            0%, 100% { opacity: 0.8; transform: scaleX(1); }
-            50% { opacity: 0.2; transform: scaleX(0.5) translateX(-8px); }
-          }
-        </style>
-      </svg>
-    `;
-  }
-  
-  if (lower.includes("gainage") || lower.includes("planche")) {
-    return `
-      <svg viewBox="0 0 100 100" width="120" height="120">
-        <defs>
-          <linearGradient id="skin" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#ffedd5" />
-            <stop offset="100%" stop-color="#fed7aa" />
-          </linearGradient>
-          <linearGradient id="jersey" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#d4ff5e" />
-            <stop offset="100%" stop-color="#80b300" />
-          </linearGradient>
-        </defs>
-        <line x1="10" y1="82" x2="90" y2="82" stroke="var(--bd)" stroke-width="3" stroke-linecap="round"/>
-        
-        <!-- Corps de profil incliné qui tremble légèrement sous la fatigue -->
-        <g transform="rotate(-15 25 75)" style="animation: plank-shake 0.12s linear infinite alternate;">
-          <circle cx="20" cy="75" r="4" fill="#252525"/>
-          <line x1="20" y1="75" x2="50" y2="75" stroke="#f0f0f0" stroke-width="8" stroke-linecap="round"/>
-          <!-- Maillot -->
-          <path d="M 50 71 L 75 71 L 75 79 L 50 79 Z" fill="url(#jersey)"/>
-          <!-- Bras d'appui -->
-          <path d="M 72 75 L 72 88 M 72 88 L 80 88" fill="none" stroke="url(#skin)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-          <!-- Tête -->
-          <circle cx="82" cy="72" r="7" fill="url(#skin)"/>
-          <path d="M 78 66 C 78 60, 86 60, 86 66 Z" fill="#ff6b2b"/>
-        </g>
-        
-        <!-- Goutte de sueur de fatigue animée -->
-        <path d="M 85 52 Q 83 57 81 52" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" style="animation: drop-flow 1.5s infinite;"/>
-        <style>
-          @keyframes plank-shake {
-            0% { transform: rotate(-14.5deg) translateY(0.5px); }
-            100% { transform: rotate(-15.5deg) translateY(-0.5px); }
-          }
-          @keyframes drop-flow {
-            0% { transform: translateY(-10px); opacity: 0; }
-            50% { opacity: 1; }
-            100% { transform: translateY(12px); opacity: 0; }
-          }
-        </style>
-      </svg>
-    `;
-  }
-  
-  if (lower.includes("relevé") || lower.includes("genoux") || lower.includes("fentes")) {
-    return `
-      <svg viewBox="0 0 100 100" width="120" height="120">
-        <defs>
-          <linearGradient id="skin" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#ffedd5" />
-            <stop offset="100%" stop-color="#fed7aa" />
-          </linearGradient>
-          <linearGradient id="jersey" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#d4ff5e" />
-            <stop offset="100%" stop-color="#80b300" />
-          </linearGradient>
-        </defs>
-        <!-- Chaise stylisée en bois de profil -->
-        <path d="M 38 80 L 38 52 L 55 52 M 38 52 L 30 30" fill="none" stroke="#854d0e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-        <!-- Tête et Casquette -->
-        <circle cx="45" cy="26" r="7" fill="url(#skin)"/>
-        <path d="M 41 20 C 41 14, 49 14, 49 20 Z" fill="#ff6b2b"/>
-        <!-- Torse droit -->
-        <path d="M 42 33 L 48 33 L 45 55 L 39 55 Z" fill="url(#jersey)"/>
-        <!-- Bras reposant sur la cuisse -->
-        <path d="M 44 38 L 52 48" fill="none" stroke="url(#skin)" stroke-width="5" stroke-linecap="round"/>
-        <!-- Jambe mobile articulée qui se lève (Genou) -->
-        <g style="transform-origin: 45px 52px; animation: knee-raise-anim 2.5s ease-in-out infinite;">
-          <line x1="45" y1="52" x2="68" y2="52" stroke="#252525" stroke-width="8" stroke-linecap="round"/> <!-- Cuisse -->
-          <line x1="68" y1="52" x2="68" y2="76" stroke="#f0f0f0" stroke-width="8" stroke-linecap="round"/> <!-- Mollet -->
-        </g>
-        <style>
-          @keyframes knee-raise-anim {
-            0%, 100% { transform: rotate(0deg); }
-            50% { transform: rotate(-32deg); }
-          }
-        </style>
-      </svg>
-    `;
-  }
-  
-  if (lower.includes("crunch") || lower.includes("dead bug") || lower.includes("vacuum")) {
-    return `
-      <svg viewBox="0 0 100 100" width="120" height="120">
-        <defs>
-          <linearGradient id="skin" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#ffedd5" />
-            <stop offset="100%" stop-color="#fed7aa" />
-          </linearGradient>
-          <linearGradient id="jersey" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#d4ff5e" />
-            <stop offset="100%" stop-color="#80b300" />
-          </linearGradient>
-        </defs>
-        <line x1="10" y1="80" x2="90" y2="80" stroke="var(--bd)" stroke-width="3"/>
-        <!-- Jambes relevées pliées immobiles -->
-        <path d="M 55 75 L 72 55 L 85 75" fill="none" stroke="#252525" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
-        <!-- Partie supérieure du buste qui s'enroule -->
-        <g style="transform-origin: 55px 75px; animation: crunch-curl 2.5s ease-in-out infinite;">
-          <path d="M 55 75 L 35 70 L 37 62 L 55 67 Z" fill="url(#jersey)"/>
-          <circle cx="28" cy="62" r="7" fill="url(#skin)"/>
-          <path d="M 24 56 C 24 50, 32 50, 32 56 Z" fill="#ff6b2b"/>
-          <path d="M 38 68 C 30 68, 30 72, 38 72" fill="none" stroke="url(#skin)" stroke-width="5" stroke-linecap="round"/>
-        </g>
-        <style>
-          @keyframes crunch-curl {
-            0%, 100% { transform: rotate(0deg); }
-            50% { transform: rotate(-16deg); }
-          }
-        </style>
-      </svg>
-    `;
-  }
-  
-  // Par défaut, ou pour l'utilisation d'élastiques / rééducation
   return `
     <svg viewBox="0 0 100 100" width="120" height="120">
-      <defs>
-        <linearGradient id="skin" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#ffedd5" />
-          <stop offset="100%" stop-color="#fed7aa" />
-        </linearGradient>
-        <linearGradient id="jersey" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stop-color="#d4ff5e" />
-          <stop offset="100%" stop-color="#80b300" />
-        </linearGradient>
-      </defs>
-      <rect x="10" y="45" width="6" height="10" rx="2" fill="var(--bd)"/>
-      <circle cx="65" cy="28" r="7" fill="url(#skin)"/>
-      <path d="M 61 22 C 61 16, 69 16, 69 22 Z" fill="#ff6b2b"/>
-      <path d="M 60 35 L 68 35 L 65 65 L 57 65 Z" fill="url(#jersey)"/>
-      <path d="M 60 65 L 55 85 M 65 65 L 70 85" fill="none" stroke="#252525" stroke-width="7" stroke-linecap="round"/>
-      <g style="transform-origin: 62px 38px; animation: elastic-pull 2.5s ease-in-out infinite;">
-        <line x1="16" y1="50" x2="48" y2="45" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
-        <path d="M 62 38 L 48 45" fill="none" stroke="url(#skin)" stroke-width="6" stroke-linecap="round"/>
-      </g>
-      <style>
-        @keyframes elastic-pull {
-          0%, 100% { transform: rotate(0deg); }
-          50% { transform: rotate(-25deg); }
-        }
-      </style>
+      <circle cx="50" cy="50" r="35" fill="none" stroke="var(--bd)" stroke-width="2"/>
+      <circle cx="50" cy="50" r="10" fill="var(--g)"/>
     </svg>
   `;
 }
 
-// Ferme la boîte modale
 function closeExerciseModal() {
   document.getElementById("exerciseModal").style.display = "none";
 }
@@ -2064,10 +1823,11 @@ function startAbdosSession(){
   abdosIsPaused = false;
   abdosIsRunning = true;
   abdosInRest = false;
+  abdosSessionDuration = 0;
+  abdosSessStart = new Date();
 
   if (abdosTicker) clearInterval(abdosTicker);
 
-  // Décompte de préparation 3.2.1 au démarrage de la séance d'Abdos
   let startCountdown = 3;
   const display = document.getElementById("abdos-display");
   display.innerHTML = `<span style="font-size: 15px; color: var(--mu); text-transform: uppercase;">Préparez-vous...</span><br><br><span style="font-family:'Space Mono',monospace; font-size:64px; color:var(--o);">${startCountdown}</span>`;
@@ -2085,11 +1845,10 @@ function startAbdosSession(){
     } else {
       clearInterval(abdosTicker);
       
-      // Lancement de la séance de musculation
       abdosRemaining = abdosWorkTime;
       speakAbdos(abdosExercises[abdosExerciseIndex]);
       updateAbdosDisplay();
-      playAbdosMusic(false); // Lance la musique de travail
+      playAbdosMusic(false);
       
       abdosTicker = setInterval(abdosTick, 1000);
       updateAbdosControlsUI();
@@ -2101,6 +1860,7 @@ function abdosTick() {
   if (abdosIsPaused || !abdosIsRunning) return;
 
   abdosRemaining--;
+  abdosSessionDuration++; // Compte le temps total d'effort réel
   updateAbdosDisplay();
 
   if (abdosRemaining <= 0) {
@@ -2108,7 +1868,7 @@ function abdosTick() {
       abdosInRest = true;
       abdosRemaining = abdosRestTime;
       speakAbdos("Repos");
-      playAbdosMusic(true); // Bascule sur la musique de repos
+      playAbdosMusic(true);
     } else {
       abdosInRest = false;
       abdosExerciseIndex++;
@@ -2118,13 +1878,13 @@ function abdosTick() {
       }
 
       if (abdosRound > abdosTotalRounds) {
-        endAbdosSession(true);
+        endAbdosSession(true); // Terminé avec succès
         return;
       }
 
       abdosRemaining = abdosWorkTime;
       speakAbdos(abdosExercises[abdosExerciseIndex]);
-      playAbdosMusic(false); // Bascule sur la musique de travail
+      playAbdosMusic(false);
     }
     updateAbdosDisplay();
   }
@@ -2191,6 +1951,7 @@ function endAbdosSession(finished) {
   if (finished) {
     display.innerHTML = "🎉 Séance terminée !";
     speakAbdos("Séance terminée, bravo");
+    saveAbdosSessionRecord(); // Sauvegarde automatique lors d'une fin complète réussie (Bloc 3)
   } else {
     display.innerHTML = "Prêt";
   }
@@ -2289,8 +2050,133 @@ function updateAbdosControlsUI() {
   }
 }
 
+// ════════════════════════════════════════════════
+//  MOTIVATION ET SUIVI DU STREAK (Bloc 3)
+// ════════════════════════════════════════════════
+function saveAbdosSessionRecord() {
+  const dateKey = toDateKey(abdosSessStart);
+  const all = getAllSessions();
+  if(!all[dateKey]) all[dateKey]=[];
+  
+  const presetKey = document.getElementById("abdos-preset").value;
+  const presetName = abdosPresets[presetKey].name;
+
+  all[dateKey].push({
+    type: "abdos",
+    mode: "abdos",
+    time: abdosSessStart.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}),
+    dur: abdosSessionDuration,
+    preset: presetName,
+    rounds: abdosTotalRounds
+  });
+  saveSessions(all);
+  
+  calculateAbdosStreaks(); // Recalcule les scores et assiduités
+  
+  const tabHist = document.getElementById('tab-history');
+  if (tabHist) tabHist.classList.add('has-data');
+}
+
+function calculateAbdosStreaks() {
+  const all = getAllSessions();
+  const abdosDates = [];
+  let totalAbdosCount = 0;
+
+  Object.keys(all).forEach(k => {
+    const daySess = all[k] || [];
+    daySess.forEach(s => {
+      if (s && (s.type === 'abdos' || s.mode === 'abdos')) {
+        totalAbdosCount++;
+        if (!abdosDates.includes(k)) {
+          abdosDates.push(k);
+        }
+      }
+    });
+  });
+
+  // Tri des dates de façon croissante
+  abdosDates.sort();
+
+  // 1. Mise à jour du total des séances
+  document.getElementById("abdos-total-sess").textContent = totalAbdosCount;
+
+  // 2. Mise à jour de la date de dernière séance
+  if (abdosDates.length > 0) {
+    const lastDateStr = abdosDates[abdosDates.length - 1];
+    const parts = lastDateStr.split('-');
+    document.getElementById("abdos-last-date").textContent = `${parseInt(parts[2])} ${MONTHS_FR[parseInt(parts[1])-1].slice(0,4)}.`;
+  } else {
+    document.getElementById("abdos-last-date").textContent = "Aucune";
+  }
+
+  // Calcul de la série actuelle (Streak) et record (Best)
+  let currentStreak = 0;
+  let bestStreak = 0;
+  const abdosSet = new Set(abdosDates);
+
+  const todayObj = new Date();
+  const yesterdayObj = new Date();
+  yesterdayObj.setDate(todayObj.getDate() - 1);
+
+  const todayKey = toDateKey(todayObj);
+  const yesterdayKey = toDateKey(yesterdayObj);
+
+  let streakDay = null;
+  if (abdosSet.has(todayKey)) {
+    streakDay = todayObj;
+  } else if (abdosSet.has(yesterdayKey)) {
+    streakDay = yesterdayObj;
+  }
+
+  if (streakDay) {
+    let tempDate = new Date(streakDay);
+    while (true) {
+      const k = toDateKey(tempDate);
+      if (abdosSet.has(k)) {
+        currentStreak++;
+        tempDate.setDate(tempDate.getDate() - 1);
+      } else {
+        break;
+      }
+    }
+  }
+
+  // Calcul du meilleur record d'assiduité consécutif
+  let tempStreak = 0;
+  if (abdosDates.length > 0) {
+    let prevDate = null;
+    abdosDates.forEach(dStr => {
+      const currentDate = new Date(dStr);
+      if (prevDate === null) {
+        tempStreak = 1;
+      } else {
+        const diffTime = Math.abs(currentDate - prevDate);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        if (diffDays === 1) {
+          tempStreak++;
+        } else if (diffDays > 1) {
+          if (tempStreak > bestStreak) {
+            bestStreak = tempStreak;
+          }
+          tempStreak = 1;
+        }
+      }
+      prevDate = currentDate;
+    });
+    if (tempStreak > bestStreak) {
+      bestStreak = tempStreak;
+    }
+  } else {
+    bestStreak = 0;
+  }
+
+  document.getElementById("abdos-streak-curr").textContent = `${currentStreak} 🔥`;
+  document.getElementById("abdos-streak-best").textContent = `${bestStreak} 👑`;
+}
+
 // Initialise le premier programme par défaut au chargement
 selectAbdosPreset("n1-c1");
+calculateAbdosStreaks(); // Calcule et affiche vos streaks dès l'ouverture de l'application
 </script>
 </body>
 </html>
