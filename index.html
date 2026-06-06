@@ -208,8 +208,9 @@ input[type=file]{display:none}
   <button onclick="showView('settings')" id="tab-settings">⚙ Réglages</button>
   <button onclick="showView('music')" id="tab-music">🎵 Musique</button>
   <button onclick="showView('history')" id="tab-history" class="has-data"><span class="dot"></span>📊 Historique</button>
+  <button onclick="showView('abdos')" id="tab-abdos">🍑 Abdos</button>
 </nav>
-<button onclick="showView('abdos')" id="tab-abdos">🍑 Abdos</button>
+
 <!-- ═══════════════════════════════════════════════════
      VUE TIMER
 ═══════════════════════════════════════════════════ -->
@@ -480,76 +481,51 @@ input[type=file]{display:none}
 
 </div>
 </div>
+
 <!-- ═══════════════════════════════════════════════════
      VUE ABDOS / FESSIERS
 ═══════════════════════════════════════════════════ -->
 <div class="view" id="view-abdos">
 <div class="wrap">
 
-<div class="section">
-  <div class="sec-title"><em>🍑</em> Programme Phase 1</div>
+  <div class="section">
+    <div class="sec-title"><em>🍑</em> Programme Phase 1</div>
+    <p style="line-height:1.6;color:var(--mu)">
+      Programme spécial récupération épaule.
+    </p>
+    <div style="display:grid;gap:10px;margin:15px 0">
+      <label>
+        Travail :
+        <input id="abdos-work" type="number" value="40" style="width:80px"> sec
+      </label>
+      <label>
+        Repos :
+        <input id="abdos-rest" type="number" value="20" style="width:80px"> sec
+      </label>
+      <label>
+        Tours :
+        <input id="abdos-rounds" type="number" value="1" style="width:80px">
+      </label>
+    </div>
 
-  <p style="line-height:1.6;color:var(--mu)">
-    Programme spécial récupération épaule.
-  </p>
-<div style="display:grid;gap:10px;margin:15px 0">
+    <div id="abdos-display" style="padding:20px; border-radius:12px; background:#111; text-align:center; font-size:22px; font-weight:bold; margin-top:15px;">
+      Prêt
+    </div>
 
-<label>
-Travail :
-<input id="abdos-work" type="number" value="40"
-style="width:80px">
-sec
-</label>
-
-<label>
-Repos :
-<input id="abdos-rest" type="number" value="20"
-style="width:80px">
-sec
-</label>
-
-<label>
-Tours :
-<input id="abdos-rounds" type="number" value="1"
-style="width:80px">
-</label>
-
-</div>
-
-<div id="abdos-display"
-style="
-padding:20px;
-border-radius:12px;
-background:#111;
-text-align:center;
-font-size:22px;
-font-weight:bold;
-margin-top:15px;
-">
-Prêt
-</div>
-
-<button onclick="startAbdosSession()"
-style="
-width:100%;
-padding:14px;
-margin-top:15px;
-border:none;
-border-radius:12px;
-font-size:16px;
-font-weight:bold;
-cursor:pointer;
-">
-▶ Démarrer
-</button>
-
-    ▶ Démarrer la séance
-  </button>
-
-</div>
+    <!-- Contrôles interactifs du module Abdos -->
+    <div style="display:flex; flex-direction:column; gap:10px; margin-top:15px;">
+      <button class="btn btn-go" id="abdos-btnGo" onclick="startAbdosSession()">▶ Démarrer la séance</button>
+      <div style="display:flex; gap:8px;">
+        <button class="btn btn-pp" id="abdos-btnPause" onclick="pauseAbdosSession()" style="flex:1;" disabled>⏸ Pause</button>
+        <button class="btn btn-sq" id="abdos-btnStop" onclick="stopAbdosSession()" style="flex:1;" disabled>⏹ Arrêter</button>
+        <button class="btn btn-pp" id="abdos-btnSkip" onclick="skipAbdosExercise()" style="flex:1.2; border-color:var(--o); color:var(--o);" disabled>⏭ Suivant</button>
+      </div>
+    </div>
+  </div>
 
 </div>
 </div>
+
 <script>
 // ════════════════════════════════════════════════
 //  DATA & STORAGE
@@ -1326,158 +1302,209 @@ function getWeekMon(d){const t=new Date(d);const day=t.getDay(),diff=t.getDate()
 buildDayPills();
 loadSettingsUI();
 if(Object.keys(getAllSessions()).length) document.getElementById('tab-history').classList.add('has-data');
-  /* =====================================================
+
+/* =====================================================
    MODULE ABDOS / FESSIERS
 ===================================================== */
-
 const abdosExercises = [
-"Pont fessier",
-"Pont fessier maintien",
-"Dead Bug",
-"Relevés de genoux assis",
-"Squats contrôlés",
-"Chaise contre mur",
-"Vacuum abdominal"
+  "Pont fessier",
+  "Pont fessier maintien",
+  "Dead Bug",
+  "Relevés de genoux assis",
+  "Squats contrôlés",
+  "Chaise contre mur",
+  "Vacuum abdominal"
 ];
 
+let abdosTicker = null;
 let abdosExerciseIndex = 0;
 let abdosRound = 1;
+let abdosRemaining = 0;
+let abdosIsPaused = false;
+let abdosIsRunning = false;
+let abdosInRest = false; 
+let abdosWorkTime = 40;
+let abdosRestTime = 20;
+let abdosTotalRounds = 1;
 
 function speakAbdos(text){
-    if("speechSynthesis" in window){
-        speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(text);
-        u.lang = "fr-FR";
-        speechSynthesis.speak(u);
-    }
+  if("speechSynthesis" in window){
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "fr-FR";
+    speechSynthesis.speak(u);
+  }
 }
 
 function startAbdosSession(){
+  abdosWorkTime = parseInt(document.getElementById("abdos-work").value) || 40;
+  abdosRestTime = parseInt(document.getElementById("abdos-rest").value) || 20;
+  abdosTotalRounds = parseInt(document.getElementById("abdos-rounds").value) || 1;
 
-    const work =
-        parseInt(
-            document.getElementById("abdos-work").value
-        );
+  abdosExerciseIndex = 0;
+  abdosRound = 1;
+  abdosIsPaused = false;
+  abdosIsRunning = true;
+  abdosInRest = false;
+  abdosRemaining = abdosWorkTime;
 
-    const rest =
-        parseInt(
-            document.getElementById("abdos-rest").value
-        );
+  if (abdosTicker) clearInterval(abdosTicker);
 
-    const rounds =
-        parseInt(
-            document.getElementById("abdos-rounds").value
-        );
+  updateAbdosControlsUI();
+  speakAbdos(abdosExercises[abdosExerciseIndex]);
+  updateAbdosDisplay();
 
-    abdosExerciseIndex = 0;
-    abdosRound = 1;
-
-    runAbdosExercise(work, rest, rounds);
+  abdosTicker = setInterval(abdosTick, 1000);
 }
 
-function runAbdosExercise(work, rest, rounds){
+function abdosTick() {
+  if (abdosIsPaused || !abdosIsRunning) return;
 
-    const display =
-        document.getElementById("abdos-display");
+  abdosRemaining--;
+  updateAbdosDisplay();
 
-    const exercise =
-        abdosExercises[abdosExerciseIndex];
+  if (abdosRemaining <= 0) {
+    if (!abdosInRest) {
+      abdosInRest = true;
+      abdosRemaining = abdosRestTime;
+      speakAbdos("Repos");
+    } else {
+      abdosInRest = false;
+      abdosExerciseIndex++;
+      if (abdosExerciseIndex >= abdosExercises.length) {
+        abdosExerciseIndex = 0;
+        abdosRound++;
+      }
 
-    let remaining = work;
+      if (abdosRound > abdosTotalRounds) {
+        endAbdosSession(true);
+        return;
+      }
 
-    display.innerHTML =
-        `
-        Tour ${abdosRound}/${rounds}<br>
-        Exercice ${abdosExerciseIndex+1}/${abdosExercises.length}<br><br>
-        ${exercise}<br><br>
-        ${remaining}
-        `;
-
-    speakAbdos(exercise);
-
-    const timer = setInterval(()=>{
-
-        remaining--;
-
-        display.innerHTML =
-        `
-        Tour ${abdosRound}/${rounds}<br>
-        Exercice ${abdosExerciseIndex+1}/${abdosExercises.length}<br><br>
-        ${exercise}<br><br>
-        ${remaining}
-        `;
-
-        if(remaining<=0){
-
-            clearInterval(timer);
-
-            startRest(work,rest,rounds);
-
-        }
-
-    },1000);
+      abdosRemaining = abdosWorkTime;
+      speakAbdos(abdosExercises[abdosExerciseIndex]);
+    }
+    updateAbdosDisplay();
+  }
 }
 
-function startRest(work,rest,rounds){
+function updateAbdosDisplay() {
+  const display = document.getElementById("abdos-display");
+  if (!abdosIsRunning) {
+    display.innerHTML = "Prêt";
+    return;
+  }
 
-    const display =
-        document.getElementById("abdos-display");
+  if (abdosInRest) {
+    display.innerHTML = `
+      Repos<br><br>
+      <span style="font-family:'Space Mono',monospace; font-size:42px; color:var(--o);">${abdosRemaining}</span>
+    `;
+  } else {
+    const exercise = abdosExercises[abdosExerciseIndex];
+    display.innerHTML = `
+      Tour ${abdosRound}/${abdosTotalRounds}<br>
+      Exercice ${abdosExerciseIndex+1}/${abdosExercises.length}<br><br>
+      <span style="color:var(--g); font-size:24px;">${exercise}</span><br><br>
+      <span style="font-family:'Space Mono',monospace; font-size:42px; color:var(--g);">${abdosRemaining}</span>
+    `;
+  }
+}
 
-    let remaining = rest;
+function pauseAbdosSession() {
+  if (!abdosIsRunning) return;
+  abdosIsPaused = !abdosIsPaused;
+  updateAbdosControlsUI();
+  if (abdosIsPaused) {
+    speakAbdos("Pause");
+  } else {
+    speakAbdos("Reprise");
+  }
+}
 
+function stopAbdosSession() {
+  endAbdosSession(false);
+}
+
+function endAbdosSession(finished) {
+  abdosIsRunning = false;
+  abdosIsPaused = false;
+  if (abdosTicker) {
+    clearInterval(abdosTicker);
+    abdosTicker = null;
+  }
+  if (window.speechSynthesis) {
+    window.speechSynthesis.cancel();
+  }
+
+  const display = document.getElementById("abdos-display");
+  if (finished) {
+    display.innerHTML = "🎉 Séance terminée !";
+    speakAbdos("Séance terminée, bravo");
+  } else {
+    display.innerHTML = "Prêt";
+  }
+  updateAbdosControlsUI();
+}
+
+function skipAbdosExercise() {
+  if (!abdosIsRunning) return;
+  
+  if (!abdosInRest) {
+    abdosInRest = true;
+    abdosRemaining = abdosRestTime;
     speakAbdos("Repos");
+  } else {
+    abdosInRest = false;
+    abdosExerciseIndex++;
+    if (abdosExerciseIndex >= abdosExercises.length) {
+      abdosExerciseIndex = 0;
+      abdosRound++;
+    }
 
-    display.innerHTML =
-        `
-        Repos<br><br>
-        ${remaining}
-        `;
+    if (abdosRound > abdosTotalRounds) {
+      endAbdosSession(true);
+      return;
+    }
 
-    const timer = setInterval(()=>{
+    abdosRemaining = abdosWorkTime;
+    speakAbdos(abdosExercises[abdosExerciseIndex]);
+  }
+  updateAbdosDisplay();
+}
 
-        remaining--;
+function updateAbdosControlsUI() {
+  const btnGo = document.getElementById("abdos-btnGo");
+  const btnPause = document.getElementById("abdos-btnPause");
+  const btnStop = document.getElementById("abdos-btnStop");
+  const btnSkip = document.getElementById("abdos-btnSkip");
 
-        display.innerHTML =
-        `
-        Repos<br><br>
-        ${remaining}
-        `;
+  if (abdosIsRunning) {
+    btnGo.disabled = true;
+    btnGo.textContent = "▶ En cours...";
+    btnPause.disabled = false;
+    btnStop.disabled = false;
+    btnSkip.disabled = false;
 
-        if(remaining<=0){
-
-            clearInterval(timer);
-
-            abdosExerciseIndex++;
-
-            if(
-                abdosExerciseIndex >=
-                abdosExercises.length
-            ){
-
-                abdosExerciseIndex = 0;
-                abdosRound++;
-
-                if(abdosRound > rounds){
-
-                    display.innerHTML =
-                    "🎉 Séance terminée";
-
-                    speakAbdos(
-                        "Séance terminée"
-                    );
-
-                    return;
-                }
-            }
-
-            runAbdosExercise(
-                work,
-                rest,
-                rounds
-            );
-        }
-
-    },1000);
+    if (abdosIsPaused) {
+      btnPause.textContent = "▶ Reprendre";
+      btnPause.style.borderColor = "var(--g)";
+      btnPause.style.color = "var(--g)";
+    } else {
+      btnPause.textContent = "⏸ Pause";
+      btnPause.style.borderColor = "var(--bd)";
+      btnPause.style.color = "var(--tx)";
+    }
+  } else {
+    btnGo.disabled = false;
+    btnGo.textContent = "▶ Démarrer la séance";
+    btnPause.disabled = true;
+    btnPause.textContent = "⏸ Pause";
+    btnPause.style.borderColor = "var(--bd)";
+    btnPause.style.color = "var(--tx)";
+    btnStop.disabled = true;
+    btnSkip.disabled = true;
+  }
 }
 </script>
 </body>
