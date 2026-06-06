@@ -197,6 +197,15 @@ input[type=file]{display:none}
 .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:50px;font-size:0.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase}
 .badge-w{background:rgba(182,245,66,.12);color:var(--g);border:1px solid rgba(182,245,66,.2)}
 .badge-r{background:rgba(255,107,43,.12);color:var(--o);border:1px solid rgba(255,107,43,.2)}
+
+/* ─── MODAL SPECIFIQUE D'INSTRUCTION ABDOS ─── */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.modal-spin {
+  animation: spin-slow 12s linear infinite;
+}
 </style>
 </head>
 <body>
@@ -392,7 +401,7 @@ input[type=file]{display:none}
     <div class="sec-title"><em>ℹ</em> Comment ça marche</div>
     <p style="font-size:0.78rem;color:var(--mu);line-height:1.6">
       Charge un fichier audio depuis ton appareil pour chaque phase.
-      La musique <strong style="color:var(--tx)">change automatiquement</strong> quand tu passes de marche à course.
+      La musique <strong style="color:var(--tx)">change automatiquement</strong> quand tu passes d'un état à l'autre.
       Les fichiers ne sont <strong style="color:var(--tx)">pas sauvegardés</strong> entre les sessions — recharge-les à chaque ouverture.
     </p>
   </div>
@@ -443,6 +452,52 @@ input[type=file]{display:none}
     <input type="file" id="fi-run" accept="audio/*" onchange="loadAudio('run',this)">
   </div>
 
+  <!-- Musique Abdos Travail -->
+  <div class="section">
+    <div class="sec-title"><em>🍑</em> Musique — Abdos Travail</div>
+    <div class="music-zone" id="mz-abdosWork">
+      <div class="music-top">
+        <span class="music-emoji">🎵</span>
+        <div class="music-info">
+          <div class="music-track empty" id="mt-abdosWork">Aucun fichier chargé</div>
+        </div>
+        <div class="music-btns">
+          <button class="btn-load" onclick="document.getElementById('fi-abdosWork').click()">📂 Choisir</button>
+          <button class="btn-clr" onclick="clearAudio('abdosWork')">✕</button>
+        </div>
+      </div>
+      <div class="vol-row">
+        <span class="vol-lbl">Volume</span>
+        <input type="range" id="vol-abdosWork" min="0" max="1" step="0.05" value="0.8" oninput="setVol('abdosWork',this.value)">
+        <span style="font-family:'Space Mono',monospace;font-size:0.72rem;color:var(--mu);width:30px;text-align:right" id="vol-abdosWork-lbl">80%</span>
+      </div>
+    </div>
+    <input type="file" id="fi-abdosWork" accept="audio/*" onchange="loadAudio('abdosWork',this)">
+  </div>
+
+  <!-- Musique Abdos Repos -->
+  <div class="section">
+    <div class="sec-title"><em>🍑</em> Musique — Abdos Repos</div>
+    <div class="music-zone" id="mz-abdosRest">
+      <div class="music-top">
+        <span class="music-emoji">🎶</span>
+        <div class="music-info">
+          <div class="music-track empty" id="mt-abdosRest">Aucun fichier chargé</div>
+        </div>
+        <div class="music-btns">
+          <button class="btn-load" onclick="document.getElementById('fi-abdosRest').click()">📂 Choisir</button>
+          <button class="btn-clr" onclick="clearAudio('abdosRest')">✕</button>
+        </div>
+      </div>
+      <div class="vol-row">
+        <span class="vol-lbl">Volume</span>
+        <input type="range" id="vol-abdosRest" min="0" max="1" step="0.05" value="0.6" oninput="setVol('abdosRest',this.value)">
+        <span style="font-family:'Space Mono',monospace;font-size:0.72rem;color:var(--mu);width:30px;text-align:right" id="vol-abdosRest-lbl">60%</span>
+      </div>
+    </div>
+    <input type="file" id="fi-abdosRest" accept="audio/*" onchange="loadAudio('abdosRest',this)">
+  </div>
+
 </div>
 </div>
 
@@ -489,26 +544,36 @@ input[type=file]{display:none}
 <div class="wrap">
 
   <div class="section">
-    <div class="sec-title"><em>🍑</em> Programme Phase 1</div>
-    <p style="line-height:1.6;color:var(--mu)">
-      Programme spécial récupération épaule.
-    </p>
-    <div style="display:grid;gap:10px;margin:15px 0">
-      <label>
-        Travail :
-        <input id="abdos-work" type="number" value="40" style="width:80px"> sec
-      </label>
-      <label>
-        Repos :
-        <input id="abdos-rest" type="number" value="20" style="width:80px"> sec
-      </label>
-      <label>
-        Tours :
-        <input id="abdos-rounds" type="number" value="1" style="width:80px">
-      </label>
+    <div class="sec-title"><em>🍑</em> Programme Médical Évolutif</div>
+    
+    <!-- Choix du circuit / niveau -->
+    <label style="font-size:0.75rem; color:var(--mu); display:block; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Sélectionner votre niveau :</label>
+    <select id="abdos-preset" onchange="selectAbdosPreset(this.value)" style="width:100%; padding:10px; background:var(--s2); border:1px solid var(--bd); color:var(--tx); border-radius:8px; font-family:'Syne',sans-serif; font-size:0.85rem; margin-bottom:12px;">
+      <option value="n1-c1">Niveau 1 - Circuit 1 (Rééducation Active - Initial)</option>
+      <option value="n1-c2">Niveau 1 - Circuit 2 (Rééducation Active - Avancé)</option>
+      <option value="n2">Niveau 2 - Retour Athlétique (Élastiques & Maintien)</option>
+      <option value="n3">Niveau 3 - Forme Complète (Épaules Opérationnelles)</option>
+    </select>
+
+    <!-- Aperçu dynamique du circuit sélectionné -->
+    <div id="abdos-list-preview" style="font-size:0.75rem; color:var(--mu); padding:10px; border-radius:8px; background:rgba(255,255,255,0.02); border:1px dashed var(--bd); margin-bottom:12px; line-height:1.5;"></div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin:15px 0">
+      <div class="set-box" style="padding:8px 10px;">
+        <div class="set-lbl" style="font-size:0.55rem;">⚡ Travail</div>
+        <input id="abdos-work" type="number" value="30" style="width:100%; background:transparent; border:none; color:var(--g); font-family:'Space Mono',monospace; font-size:1.3rem; outline:none; text-align:center;">
+      </div>
+      <div class="set-box" style="padding:8px 10px;">
+        <div class="set-lbl" style="font-size:0.55rem;">💤 Repos</div>
+        <input id="abdos-rest" type="number" value="30" style="width:100%; background:transparent; border:none; color:var(--o); font-family:'Space Mono',monospace; font-size:1.3rem; outline:none; text-align:center;">
+      </div>
+      <div class="set-box" style="padding:8px 10px;">
+        <div class="set-lbl" style="font-size:0.55rem;">🔁 Tours</div>
+        <input id="abdos-rounds" type="number" value="3" style="width:100%; background:transparent; border:none; color:var(--tx); font-family:'Space Mono',monospace; font-size:1.3rem; outline:none; text-align:center;">
+      </div>
     </div>
 
-    <div id="abdos-display" style="padding:20px; border-radius:12px; background:#111; text-align:center; font-size:22px; font-weight:bold; margin-top:15px;">
+    <div id="abdos-display" style="padding:24px 10px; border-radius:12px; background:#111; text-align:center; font-size:18px; font-weight:bold; margin-top:15px; line-height:1.4;">
       Prêt
     </div>
 
@@ -524,6 +589,28 @@ input[type=file]{display:none}
   </div>
 
 </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     MODAL DE VISUALISATION D'EXERCICE (Surgissant)
+═══════════════════════════════════════════════════ -->
+<div id="exerciseModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:9999; align-items:center; justify-content:center; padding:16px; animation:fadeIn 0.2s ease;">
+  <div style="background:var(--s1); border:1px solid var(--bd); border-radius:20px; width:100%; max-width:400px; padding:20px; position:relative;">
+    <button onclick="closeExerciseModal()" style="position:absolute; top:12px; right:12px; width:30px; height:30px; border-radius:50%; border:1px solid var(--bd); background:var(--s2); color:var(--tx); cursor:pointer; font-size:1.1rem; display:flex; align-items:center; justify-content:center; transition:all 0.15s;">✕</button>
+    
+    <!-- Zone d'illustration dynamique animée en SVG -->
+    <div id="modalVisualContainer" style="width:100%; display:flex; justify-content:center; align-items:center; margin-bottom:15px; height:120px; background:rgba(0,0,0,0.2); border-radius:12px; border:1px solid var(--bd); overflow:hidden;"></div>
+    
+    <h3 id="modalTitle" style="font-size:1.2rem; text-align:center; color:var(--g); margin-bottom:14px; font-weight:800;">Nom de l'exercice</h3>
+    
+    <div style="font-size:0.85rem; color:var(--tx); line-height:1.6; max-height:240px; overflow-y:auto; margin-bottom:14px; padding-right:4px;">
+      <strong style="color:var(--mu); font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:6px;">Consignes d'exécution :</strong>
+      <ol id="modalSteps" style="margin-left:20px; margin-top:4px; margin-bottom:14px; display:grid; gap:6px;">
+      </ol>
+      <div id="modalTips" style="background:rgba(255,107,43,0.08); border:1px solid rgba(255,107,43,0.25); color:var(--o); padding:10px; border-radius:8px; font-size:0.75rem; line-height:1.45;">
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -735,11 +822,18 @@ function updateWalkRunStats() {
 // ════════════════════════════════════════════════
 //  AUDIO
 // ════════════════════════════════════════════════
-const aud = { walk: new Audio(), run: new Audio() };
-aud.walk.loop = aud.run.loop = true;
+const aud = { 
+  walk: new Audio(), 
+  run: new Audio(),
+  abdosWork: new Audio(),
+  abdosRest: new Audio()
+};
+aud.walk.loop = aud.run.loop = aud.abdosWork.loop = aud.abdosRest.loop = true;
 aud.walk.volume = 0.8; aud.run.volume = 0.9;
-const audName = { walk:'', run:'' };
-const audLoaded = { walk:false, run:false };
+aud.abdosWork.volume = 0.8; aud.abdosRest.volume = 0.6; // Plus doux pour les phases de repos
+
+const audName = { walk:'', run:'', abdosWork:'', abdosRest:'' };
+const audLoaded = { walk:false, run:false, abdosWork:false, abdosRest:false };
 
 function loadAudio(type, input) {
   const file = input.files[0]; if (!file) return;
@@ -757,7 +851,12 @@ function clearAudio(type) {
   document.getElementById('mt-'+type).classList.add('empty');
   document.getElementById('mz-'+type).classList.remove('loaded');
   document.getElementById('fi-'+type).value = '';
-  updateNP(isWalk);
+  if (type === 'walk' || type === 'run') {
+    updateNP(isWalk);
+  } else {
+    const npBar = document.getElementById('npBar');
+    if (npBar) npBar.classList.remove('vis');
+  }
 }
 function setVol(type, val) {
   aud[type].volume = parseFloat(val);
@@ -897,7 +996,7 @@ function calculateGpsDistance(lat1, lon1, lat2, lon2) {
 }
 
 // ════════════════════════════════════════════════
-//  TIMER ENGINE
+//  TIMER ENGINE (AVEC DÉCOMPTE 3-2-1 INITIAL)
 // ════════════════════════════════════════════════
 let ticker=null, elapsed=0, phaseTime=0, isWalk=true, cycles=0, dist=0, distWalk=0, distRun=0, timeWalk=0, timeRun=0, paused=false, running=false, sessStart=null, lastGpsTimestamp=0;
 
@@ -905,26 +1004,42 @@ function startSession() {
   const silence = new AudioContext();
   silence.resume();
   
-  running=true;paused=false;elapsed=0;phaseTime=0;cycles=0;dist=0;distWalk=0;distRun=0;timeWalk=0;timeRun=0;isWalk=true;sessStart=new Date();
-  lastGpsTimestamp = Date.now();
   document.getElementById('btnGo').disabled=true;
-  document.getElementById('btnPP').disabled=false;
-  document.getElementById('btnSq').disabled=false;
   
-  const s = daySettings[currentDay];
+  let startCountdown = 3;
+  const big = document.getElementById('timerBig');
+  big.textContent = "00:03";
+  speak("Préparez-vous", false);
+  beep(600, 0.15);
   
-  requestWakeLock();
-  
-  if (s.useGps) {
-    startGpsTracking();
-  } else {
-    // Affiche la vitesse estimée initiale de marche
-    document.getElementById('sSpeed').textContent = s.wspd.toFixed(1);
-  }
-  
-  speak('Commencez à marcher !',false);beep(440,.3);
-  playFor(true);setPhaseUI(true);
-  ticker=setInterval(tick,1000);
+  const startTimer = setInterval(() => {
+    startCountdown--;
+    if (startCountdown > 0) {
+      big.textContent = "00:0" + startCountdown;
+      beep(600, 0.15);
+    } else {
+      clearInterval(startTimer);
+      
+      // Lancement réel de la séance
+      running=true;paused=false;elapsed=0;phaseTime=0;cycles=0;dist=0;distWalk=0;distRun=0;timeWalk=0;timeRun=0;isWalk=true;sessStart=new Date();
+      lastGpsTimestamp = Date.now();
+      document.getElementById('btnPP').disabled=false;
+      document.getElementById('btnSq').disabled=false;
+      
+      const s = daySettings[currentDay];
+      requestWakeLock();
+      
+      if (s.useGps) {
+        startGpsTracking();
+      } else {
+        document.getElementById('sSpeed').textContent = s.wspd.toFixed(1);
+      }
+      
+      speak('Commencez à marcher !',false);beep(440,.3);
+      playFor(true);setPhaseUI(true);
+      ticker=setInterval(tick,1000);
+    }
+  }, 1000);
 }
 
 function pauseSession() {
@@ -1086,7 +1201,7 @@ function setPhaseUI(walk) {
 }
 
 // ════════════════════════════════════════════════
-//  HISTORY
+//  HISTORY (SÉCURISÉE AVEC TRY-CATCH)
 // ════════════════════════════════════════════════
 let histView='month';
 let histRef = new Date();
@@ -1104,55 +1219,73 @@ function navPeriod(dir){
 }
 
 function renderHistory(){
-  const all=getAllSessions();
-  if(histView==='month') renderMonth(all);
-  else if(histView==='week') renderWeek(all);
-  else renderList(all);
+  try {
+    const all=getAllSessions() || {};
+    if(histView==='month') renderMonth(all);
+    else if(histView==='week') renderWeek(all);
+    else renderList(all);
+  } catch(e) {
+    console.error("Erreur globale dans renderHistory :", e);
+    document.getElementById('histContent').innerHTML = `<div class="no-data">Erreur de structure dans les données sauvegardées.</div>`;
+  }
 }
 
 function renderMonth(all){
-  const y=histRef.getFullYear(), m=histRef.getMonth();
-  document.getElementById('histPeriodLabel').textContent=MONTHS_FR[m]+' '+y;
-  const first=new Date(y,m,1).getDay(); // 0=Sun
-  const firstMon=first===0?6:first-1;
-  const daysInMonth=new Date(y,m+1,0).getDate();
-  const today=new Date();
+  try {
+    const y=histRef.getFullYear(), m=histRef.getMonth();
+    const labelEl = document.getElementById('histPeriodLabel');
+    if (labelEl) labelEl.textContent=MONTHS_FR[m]+' '+y;
+    const first=new Date(y,m,1).getDay(); // 0=Sun
+    const firstMon=first===0?6:first-1;
+    const daysInMonth=new Date(y,m+1,0).getDate();
+    const today=new Date();
 
-  // Compute summary
-  let totKm=0,totSess=0,totSec=0;
-  for(let d=1;d<=daysInMonth;d++){
-    const k=toDateKey(new Date(y,m,d));
-    const sess=all[k]||[];
-    sess.forEach(s=>{totKm+=s.dist;totSess++;totSec+=s.dur;});
+    // Calcul du résumé sécurisé
+    let totKm=0,totSess=0,totSec=0;
+    for(let d=1;d<=daysInMonth;d++){
+      const k=toDateKey(new Date(y,m,d));
+      const sess=all[k]||[];
+      sess.forEach(s=>{
+        if (s) {
+          totKm += (s.dist || 0);
+          totSess++;
+          totSec += (s.dur || 0);
+        }
+      });
+    }
+    setSummary(totKm,totSess,totSec);
+
+    let html='<div class="month-grid">';
+    ['L','M','M','J','V','S','D'].forEach(d=>html+=`<div class="day-hdr">${d}</div>`);
+    for(let i=0;i<firstMon;i++) html+=`<div class="cal-day empty"></div>`;
+    for(let d=1;d<=daysInMonth;d++){
+      const dt=new Date(y,m,d);
+      const k=toDateKey(dt);
+      const sess=all[k]||[];
+      const km=sess.reduce((a,s)=>a + (s ? (s.dist || 0) : 0), 0);
+      const isToday=dt.toDateString()===today.toDateString();
+      const hasRun=sess.some(s=>s && s.mode==='both');
+      const hasWalk=sess.length>0;
+      html+=`<div class="cal-day${isToday?' today':''}${hasRun?' has-run':hasWalk?' has-walk':''}" onclick="showDaySessions('${k}')">
+        <span class="dn" style="color:${isToday?'var(--g)':'var(--tx)'}">${d}</span>
+        ${km>0?`<span class="dk">${km.toFixed(1)}</span>`:''}
+        ${sess.length>0?`<span class="di">${hasRun?'🏃':'🚶'}</span>`:''}
+      </div>`;
+    }
+    html+='</div>';
+
+    // Day detail placeholder
+    html+='<div id="dayDetail"></div>';
+    const contentEl = document.getElementById('histContent');
+    if (contentEl) contentEl.innerHTML=html;
+  } catch(err) {
+    console.error("Erreur de rendu dans renderMonth :", err);
+    document.getElementById('histContent').innerHTML = `<div class="no-data">Impossible de générer le calendrier.</div>`;
   }
-  setSummary(totKm,totSess,totSec);
-
-  let html='<div class="month-grid">';
-  ['L','M','M','J','V','S','D'].forEach(d=>html+=`<div class="day-hdr">${d}</div>`);
-  for(let i=0;i<firstMon;i++) html+=`<div class="cal-day empty"></div>`;
-  for(let d=1;d<=daysInMonth;d++){
-    const dt=new Date(y,m,d);
-    const k=toDateKey(dt);
-    const sess=all[k]||[];
-    const km=sess.reduce((a,s)=>a+s.dist,0);
-    const isToday=dt.toDateString()===today.toDateString();
-    const hasRun=sess.some(s=>s.mode==='both');
-    const hasWalk=sess.length>0;
-    html+=`<div class="cal-day${isToday?' today':''}${hasRun?' has-run':hasWalk?' has-walk':''}" onclick="showDaySessions('${k}')">
-      <span class="dn">${d}</span>
-      ${km>0?`<span class="dk">${km.toFixed(1)}</span>`:''}
-      ${sess.length>0?`<span class="di">${hasRun?'🏃':'🚶'}</span>`:''}
-    </div>`;
-  }
-  html+='</div>';
-
-  // Day detail placeholder
-  html+='<div id="dayDetail"></div>';
-  document.getElementById('histContent').innerHTML=html;
 }
 
 function showDaySessions(dateKey){
-  const all=getAllSessions();
+  const all=getAllSessions() || {};
   const sess=all[dateKey]||[];
   const detail=document.getElementById('dayDetail');
   if(!detail)return;
@@ -1160,67 +1293,100 @@ function showDaySessions(dateKey){
   const parts=dateKey.split('-');
   const label=`${parseInt(parts[2])} ${MONTHS_FR[parseInt(parts[1])-1]} ${parts[0]}`;
   detail.innerHTML=`<div class="sec-title" style="margin:12px 0 8px"><em>📋</em> ${label}</div>`
-    +sess.map((s,i)=>sessionCard(s,dateKey,i)).join('');
+    +sess.map((s,i)=>{
+      if (s) return sessionCard(s,dateKey,i);
+      return '';
+    }).join('');
 }
 
 function renderWeek(all){
-  const mon=getWeekMon(histRef);
-  const fri=new Date(mon.getTime()+6*86400000);
-  document.getElementById('histPeriodLabel').textContent=
-    `${mon.getDate()} ${MONTHS_FR[mon.getMonth()].slice(0,3)} – ${fri.getDate()} ${MONTHS_FR[fri.getMonth()].slice(0,3)}`;
-  const today=new Date();
-  let totKm=0,totSess=0,totSec=0;
-  let html='';
-  for(let row=0;row<1;row++){
-    html+=`<div class="week-row"><div class="week-lbl">Sem.</div>`;
-    for(let i=0;i<7;i++){
-      const dt=new Date(mon.getTime()+i*86400000);
-      const k=toDateKey(dt);
-      const sess=all[k]||[];
-      const km=sess.reduce((a,s)=>a+s.dist,0);
-      const isToday=dt.toDateString()===today.toDateString();
-      const hasRun=sess.some(s=>s.mode==='both');
-      totKm+=km;totSess+=sess.length;sess.forEach(s=>totSec+=s.dur);
-      html+=`<div class="week-day${isToday?' today':''}" onclick="showDayDetail('${k}','wkd')">
-        <div class="wd-name">${DAYS_FR[i]}</div>
-        <div class="wd-km">${km>0?km.toFixed(1):'—'}</div>
-        <div class="wd-ico">${sess.length?(hasRun?'🏃':'🚶'):''}</div>
-      </div>`;
+  try {
+    const mon=getWeekMon(histRef);
+    const fri=new Date(mon.getTime()+6*86400000);
+    const labelEl = document.getElementById('histPeriodLabel');
+    if (labelEl) {
+      labelEl.textContent= `${mon.getDate()} ${MONTHS_FR[mon.getMonth()].slice(0,3)} – ${fri.getDate()} ${MONTHS_FR[fri.getMonth()].slice(0,3)}`;
     }
-    html+='</div>';
+    const today=new Date();
+    let totKm=0,totSess=0,totSec=0;
+    let html='';
+    for(let row=0;row<1;row++){
+      html+=`<div class="week-row"><div class="week-lbl">Sem.</div>`;
+      for(let i=0;i<7;i++){
+        const dt=new Date(mon.getTime()+i*86400000);
+        const k=toDateKey(dt);
+        const sess=all[k]||[];
+        const km=sess.reduce((a,s)=>a + (s ? (s.dist || 0) : 0), 0);
+        const isToday=dt.toDateString()===today.toDateString();
+        const hasRun=sess.some(s=>s && s.mode==='both');
+        totKm+=km;totSess+=sess.length;
+        sess.forEach(s=>{ if(s) totSec+=(s.dur||0); });
+        html+=`<div class="week-day${isToday?' today':''}" onclick="showDayDetail('${k}','wkd')">
+          <div class="wd-name">${DAYS_FR[i]}</div>
+          <div class="wd-km">${km>0?km.toFixed(1):'—'}</div>
+          <div class="wd-ico">${sess.length?(hasRun?'🏃':'🚶'):''}</div>
+        </div>`;
+      }
+      html+='</div>';
+    }
+    setSummary(totKm,totSess,totSec);
+    html+='<div id="wkd"></div>';
+    const contentEl = document.getElementById('histContent');
+    if (contentEl) contentEl.innerHTML=html;
+  } catch(err) {
+    console.error("Erreur de rendu dans renderWeek :", err);
   }
-  setSummary(totKm,totSess,totSec);
-  html+='<div id="wkd"></div>';
-  document.getElementById('histContent').innerHTML=html;
 }
 
 function showDayDetail(dateKey,containerId){
-  const all=getAllSessions();
+  const all=getAllSessions() || {};
   const sess=all[dateKey]||[];
   const el=document.getElementById(containerId);
   if(!el)return;
   const parts=dateKey.split('-');
   const label=`${parseInt(parts[2])} ${MONTHS_FR[parseInt(parts[1])-1]} ${parts[0]}`;
   el.innerHTML=`<div class="sec-title" style="margin:12px 0 8px"><em>📋</em> ${label}</div>`
-    +(sess.length?sess.map((s,i)=>sessionCard(s,dateKey,i)).join(''):
+    +(sess.length?sess.map((s,i)=>{
+      if (s) return sessionCard(s,dateKey,i);
+      return '';
+    }).join(''):
     `<div class="no-data">Aucune session ce jour-là</div>`);
 }
 
 function renderList(all){
-  document.getElementById('histPeriodLabel').textContent='Toutes les sessions';
-  const dates=Object.keys(all).sort().reverse();
-  let totKm=0,totSess=0,totSec=0;
-  dates.forEach(k=>(all[k]||[]).forEach(s=>{totKm+=s.dist;totSess++;totSec+=s.dur;}));
-  setSummary(totKm,totSess,totSec);
-  if(!dates.length){document.getElementById('histContent').innerHTML=`<div class="no-data">Aucune session enregistrée</div>`;return;}
-  let html='';
-  dates.forEach(k=>{
-    const parts=k.split('-');
-    const label=`${parseInt(parts[2])} ${MONTHS_FR[parseInt(parts[1])-1]} ${parts[0]}`;
-    html+=`<div class="sec-title" style="margin:20px 0 8px"><em>📅</em> ${label}</div>`;
-    (all[k]||[]).forEach((s,i)=>html+=sessionCard(s,k,i));
-  });
-  document.getElementById('histContent').innerHTML=html;
+  try {
+    const labelEl = document.getElementById('histPeriodLabel');
+    if (labelEl) labelEl.textContent='Toutes les sessions';
+    const dates=Object.keys(all).sort().reverse();
+    let totKm=0,totSess=0,totSec=0;
+    dates.forEach(k=>{
+      (all[k]||[]).forEach(s=>{
+        if (s) {
+          totKm+=(s.dist||0);
+          totSess++;
+          totSec+=(s.dur||0);
+        }
+      });
+    });
+    setSummary(totKm,totSess,totSec);
+    const contentEl = document.getElementById('histContent');
+    if(!dates.length){
+      if (contentEl) contentEl.innerHTML=`<div class="no-data">Aucune session enregistrée</div>`;
+      return;
+    }
+    let html='';
+    dates.forEach(k=>{
+      const parts=k.split('-');
+      const label=`${parseInt(parts[2])} ${MONTHS_FR[parseInt(parts[1])-1]} ${parts[0]}`;
+      html+=`<div class="sec-title" style="margin:20px 0 8px"><em>📅</em> ${label}</div>`;
+      (all[k]||[]).forEach((s,i)=>{
+        if (s) html+=sessionCard(s,k,i);
+      });
+    });
+    if (contentEl) contentEl.innerHTML=html;
+  } catch(err) {
+    console.error("Erreur de rendu dans renderList :", err);
+  }
 }
 
 function sessionCard(s,dateKey,idx){
@@ -1230,8 +1396,8 @@ function sessionCard(s,dateKey,idx){
   const runSec = s.runSec || 60;
   const wspd = s.wspd || 5.0;
   const rspd = s.rspd || 10.0;
-  const distWalk = s.distWalk !== undefined ? s.distWalk : (s.mode === 'walk' ? s.dist : s.dist * 0.6);
-  const distRun = s.distRun !== undefined ? s.distRun : (s.mode === 'walk' ? 0 : s.dist * 0.4);
+  const distWalk = s.distWalk !== undefined ? s.distWalk : (s.mode === 'walk' ? (s.dist || 0) : (s.dist || 0) * 0.6);
+  const distRun = s.distRun !== undefined ? s.distRun : (s.mode === 'walk' ? 0 : (s.dist || 0) * 0.4);
   
   // Vitesses réelles enregistrées (nouveau format)
   const avgWspd = s.avgWspd !== undefined ? s.avgWspd : null;
@@ -1266,9 +1432,9 @@ function sessionCard(s,dateKey,idx){
     <span class="sc-ico">${s.mode==='both'?'🏃':'🚶'}</span>
     <div class="sc-info">
       <div class="sc-date">${s.time}</div>
-      <div class="sc-stats">${s.dist.toFixed(2)} km · ${fmtSec(s.dur)}</div>
+      <div class="sc-stats">${(s.dist || 0).toFixed(2)} km · ${fmtSec(s.dur || 0)}</div>
       ${detailHtml}
-      <div class="sc-sub" style="margin-top: 4px;">${s.cycles} cycles · <span class="badge ${s.mode==='both'?'badge-r':'badge-w'}">${s.mode==='both'?'intervalles':'marche'}</span></div>
+      <div class="sc-sub" style="margin-top: 4px;">${s.cycles || 0} cycles · <span class="badge ${s.mode==='both'?'badge-r':'badge-w'}">${s.mode==='both'?'intervalles':'marche'}</span></div>
     </div>
     <button class="sc-del" onclick="deleteSession('${dateKey}',${idx})" title="Supprimer">✕</button>
   </div>`;
@@ -1276,16 +1442,19 @@ function sessionCard(s,dateKey,idx){
 
 function deleteSession(dateKey,idx){
   if(!confirm('Supprimer cette session ?'))return;
-  const all=getAllSessions();
+  const all=getAllSessions() || {};
   if(all[dateKey]){all[dateKey].splice(idx,1);if(!all[dateKey].length)delete all[dateKey];}
   saveSessions(all);renderHistory();
 }
 
 function setSummary(km,sess,sec){
-  document.getElementById('sum-km').textContent=km.toFixed(2);
-  document.getElementById('sum-sess').textContent=sess;
+  const sumKmEl = document.getElementById('sum-km');
+  const sumSessEl = document.getElementById('sum-sess');
+  const sumTimeEl = document.getElementById('sum-time');
+  if (sumKmEl) sumKmEl.textContent=km.toFixed(2);
+  if (sumSessEl) sumSessEl.textContent=sess;
   const h=Math.floor(sec/3600),mn=Math.floor((sec%3600)/60);
-  document.getElementById('sum-time').textContent=h>0?h+'h'+String(mn).padStart(2,'0'):mn+'min';
+  if (sumTimeEl) sumTimeEl.textContent=h>0?h+'h'+String(mn).padStart(2,'0'):mn+'min';
 }
 
 // ════════════════════════════════════════════════
@@ -1301,20 +1470,260 @@ function getWeekMon(d){const t=new Date(d);const day=t.getDay(),diff=t.getDate()
 // ════════════════════════════════════════════════
 buildDayPills();
 loadSettingsUI();
-if(Object.keys(getAllSessions()).length) document.getElementById('tab-history').classList.add('has-data');
+if(Object.keys(getAllSessions()).length) {
+  const tabHist = document.getElementById('tab-history');
+  if (tabHist) tabHist.classList.add('has-data');
+}
 
 /* =====================================================
-   MODULE ABDOS / FESSIERS
+   MODULE ABDOS / FESSIERS - LOGIQUE ÉVOLUTIVE
 ===================================================== */
-const abdosExercises = [
-  "Pont fessier",
-  "Pont fessier maintien",
-  "Dead Bug",
-  "Relevés de genoux assis",
-  "Squats contrôlés",
-  "Chaise contre mur",
-  "Vacuum abdominal"
-];
+const abdosPresets = {
+  "n1-c1": {
+    name: "Niveau 1 - Circuit 1 (Rééducation active - Initial)",
+    work: 30, rest: 30, rounds: 3,
+    exercises: [
+      "Squats au poids du corps",
+      "Pont fessier",
+      "Crunchs partiels",
+      "Relevés de genoux assis",
+      "Gainage debout contre un mur"
+    ]
+  },
+  "n1-c2": {
+    name: "Niveau 1 - Circuit 2 (Rééducation active - Avancé)",
+    work: 40, rest: 20, rounds: 4,
+    exercises: [
+      "Squats lents",
+      "Fentes arrière",
+      "Pont fessier une jambe",
+      "Dead bug",
+      "Mountain climber debout"
+    ]
+  },
+  "n2": {
+    name: "Niveau 2 - Retour Athlétique",
+    work: 40, rest: 20, rounds: 4,
+    exercises: [
+      "Squats élastique",
+      "Pont fessier maintien",
+      "Gainage adapté (sans appui lourd)",
+      "Rotations buste élastique debout",
+      "Extensions lombaires debout"
+    ]
+  },
+  "n3": {
+    name: "Niveau 3 - Forme Complète",
+    work: 45, rest: 15, rounds: 4,
+    exercises: [
+      "Pompes inclinées (stabilité épaule)",
+      "Rowing élastique debout",
+      "Gainage complet",
+      "Squats Jump",
+      "Superman au sol"
+    ]
+  }
+};
+
+// Base de connaissances visuelles (illustrations textuelles et consignes médicales sécurisées)
+const exerciseVisuals = {
+  "Squats au poids du corps": {
+    emoji: "🍑",
+    steps: [
+      "Debout, pieds largeur des épaules, dos bien droit.",
+      "Descendez vos fesses vers l'arrière comme pour vous asseoir.",
+      "Gardez vos abdominaux engagés tout au long du mouvement.",
+      "Poussez fermement sur vos talons pour remonter."
+    ],
+    tips: "⚠️ Zéro sollicitation des épaules. Gardez simplement les bras croisés sur la poitrine ou relâchés le long du corps."
+  },
+  "Pont fessier": {
+    emoji: "🛏️",
+    steps: [
+      "Allongé sur le dos, pliez vos genoux et posez vos pieds à plat au sol.",
+      "Serrez activement vos fessiers et rentrez le nombril.",
+      "Soulevez le bassin pour aligner genoux, hanches et torse.",
+      "Redescendez lentement en contrôlant sans poser complètement les fesses."
+    ],
+    tips: "⚠️ Gardez les bras détendus sur le sol. Ne prenez aucun appui forcé sur le haut du dos."
+  },
+  "Crunchs partiels": {
+    emoji: "🧘",
+    steps: [
+      "Allongé sur le dos, les pieds au sol et les genoux fléchis.",
+      "Croisez fermement vos bras sur votre poitrine.",
+      "Enroulez la sangle abdominale pour décoller uniquement vos omoplates.",
+      "Expirez à la montée, puis redescendez lentement."
+    ],
+    tips: "⚠️ Ne mettez jamais les mains derrière la tête afin de préserver votre cou et votre épaule en rééducation."
+  },
+  "Relevés de genoux assis": {
+    emoji: "🪑",
+    steps: [
+      "Asseyez-vous bien droit sur le bord d'une chaise solide.",
+      "Engagez votre ceinture abdominale sans vous avachir.",
+      "Levez alternativement les genoux vers la poitrine de manière lente.",
+      "Contrôlez la descente pour ne pas laisser tomber le pied."
+    ],
+    tips: "⚠️ Aucun appui sur les bras nécessaire. Posez simplement vos mains à plat sur vos cuisses."
+  },
+  "Gainage debout contre un mur": {
+    emoji: "🧱",
+    steps: [
+      "Placez-vous face au mur, reculé d'environ un grand pas.",
+      "Posez vos avant-bras à plat sur le mur, largeur d'épaules.",
+      "Serrez les fessiers, rentrez le ventre pour former une ligne droite.",
+      "Maintenez la position en respirant calmement."
+    ],
+    tips: "⚠️ Moins contraignant que le sol. Si l'épaule tire, rapprochez légèrement vos pieds du mur."
+  },
+  "Squats lents": {
+    emoji: "🍑",
+    steps: [
+      "Effectuez un squat classique en modifiant le tempo.",
+      "Prenez 4 secondes entières pour descendre.",
+      "Maintenez une pause de 2 secondes en position basse.",
+      "Remontez en 4 secondes en contrôlant l'effort."
+    ],
+    tips: "⚠️ Un excellent moyen de faire monter le cardio et de brûler des calories sans aucun impact osseux."
+  },
+  "Fentes arrière": {
+    emoji: "🏃‍♂️",
+    steps: [
+      "Debout, faites un grand pas vers l'arrière avec un pied.",
+      "Descendez le genou arrière verticalement vers le sol.",
+      "Gardez le genou de devant bien aligné avec votre pied.",
+      "Repoussez le sol avec la jambe avant pour revenir debout."
+    ],
+    tips: "⚠️ Ne lancez pas vos bras pour l'équilibre. Posez vos mains sur votre taille."
+  },
+  "Pont fessier une jambe": {
+    emoji: "🦵",
+    steps: [
+      "Position de départ classique du pont fessier au sol.",
+      "Tendez une jambe droite vers l'avant ou le ciel.",
+      "Poussez fort sur le talon de la jambe pliée pour lever le bassin.",
+      "Redescendez lentement. Changez de jambe au tour suivant."
+    ],
+    tips: "⚠️ Intensifie le travail de l'arrière des cuisses et du bas du dos sans charges."
+  },
+  "Dead bug": {
+    emoji: "🪲",
+    steps: [
+      "Allongé sur le dos, genoux à 90° au-dessus des hanches.",
+      "Gardez le bas de votre dos collé au sol.",
+      "Descendez lentement une jambe vers le sol en expirant.",
+      "Revenez à la position de départ puis alternez."
+    ],
+    tips: "⚠️ Gardez vos bras croisés sur le torse ou verticaux sans mouvement si l'épaule est douloureuse."
+  },
+  "Mountain climber debout": {
+    emoji: "🧗‍♂️",
+    steps: [
+      "Debout, simulez une montée de genoux active sur place.",
+      "Montez alternativement vos genoux très haut vers la poitrine.",
+      "Restez fier et droit, sans vous pencher en avant.",
+      "Maintenez un rythme dynamique et fluide."
+    ],
+    tips: "⚠️ Donne tous les bienfaits cardio du mountain climber classique sans aucun appui sur l'épaule."
+  },
+  "Squats élastique": {
+    emoji: "🎗️",
+    steps: [
+      "Placez un élastique circulaire fermé juste au-dessus de vos genoux.",
+      "Descendez en squat en repoussant l'élastique vers l'extérieur.",
+      "Remontez en conservant cette tension permanente."
+    ],
+    tips: "⚠️ Stimule intensément le moyen fessier pour stabiliser l'articulation de la hanche."
+  },
+  "Pont fessier maintien": {
+    emoji: "⏱️",
+    steps: [
+      "Montez le bassin en position haute de pont fessier.",
+      "Bloquez la position en serrant fessiers et abdominaux.",
+      "Maintenez l'immobilité complète pendant toute la durée."
+    ],
+    tips: "⚠️ Pensez à maintenir une respiration thoracique fluide, sans apnée."
+  },
+  "Gainage adapté (sans appui lourd)": {
+    emoji: "🤸",
+    steps: [
+      "Position de planche surélevée sur une chaise haute ou un lit.",
+      "Contractez l'ensemble du corps (ventre, fessiers, cuisses).",
+      "Évitez de laisser s'affaisser le bas du dos."
+    ],
+    tips: "⚠️ Repose en grande partie sur la poussée des cuisses. Réduisez le temps si l'épaule fatigue."
+  },
+  "Rotations buste élastique debout": {
+    emoji: "🔄",
+    steps: [
+      "Élastique fixé sur le côté à hauteur de nombril.",
+      "Saisissez l'élastique et contractez fermement les obliques.",
+      "Effectuez une rotation du haut du corps à l'opposé de l'attache.",
+      "Contrôlez la phase de retour."
+    ],
+    tips: "⚠️ Gardez le coude de l'épaule opérée bien collé au flanc. L'épaule ne doit pas forcer."
+  },
+  "Extensions lombaires debout": {
+    emoji: "🧍",
+    steps: [
+      "Debout, les bras croisés sur la poitrine.",
+      "Basculez le torse droit vers l'avant en poussant les fesses en arrière.",
+      "Conservez les genoux légèrement déverrouillés et le dos plat.",
+      "Remontez en contractant les fessiers."
+    ],
+    tips: "⚠️ Ne forcez pas la descente au-delà de l'horizontale. Concentrez-vous sur l'arrière des cuisses."
+  },
+  "Pompes inclinées (stabilité épaule)": {
+    emoji: "🦾",
+    steps: [
+      "Mains posées à plat sur un plan de travail de cuisine ou table haute.",
+      "Descendez le buste solide en un bloc.",
+      "Repoussez doucement pour retrouver les bras tendus."
+    ],
+    tips: "⚠️ Exercice de rééducation avancée. À éviter absolument en phase initiale, suivez l'avis de votre kiné."
+  },
+  "Rowing élastique debout": {
+    emoji: "🛶",
+    steps: [
+      "Élastique accroché en face de vous.",
+      "Tirez les coudes vers l'arrière en serrant fermement vos omoplates.",
+      "Maintenez une seconde l'effort de rapprochement.",
+      "Revenez lentement."
+    ],
+    tips: "⚠️ Excellent exercice pour l'arrière de l'épaule et l'ouverture post-opératoire de la cage thoracique."
+  },
+  "Gainage complet": {
+    emoji: "🪵",
+    steps: [
+      "Planche classique au sol sur les avant-bras et pointes de pieds.",
+      "Serrez le ventre, alignez bassin, dos et épaules.",
+      "Maintenez la position."
+    ],
+    tips: "⚠️ Demande une coiffe des rotateurs guérie et stable pour supporter le poids corporel."
+  },
+  "Squats Jump": {
+    emoji: "🦘",
+    steps: [
+      "Faites un squat complet fluide.",
+      "Poussez fort pour décoller du sol dans un saut vertical léger.",
+      "Amortissez la réception sur la pointe des pieds, genoux souples."
+    ],
+    tips: "⚠️ Un exercice puissant pour le métabolisme, à réserver aux phases finales de votre forme."
+  },
+  "Superman au sol": {
+    emoji: "🧜‍♂️",
+    steps: [
+      "Allongé à plat ventre sur le sol.",
+      "Décollez simultanément le haut de la poitrine et vos cuisses.",
+      "Maintenez 2 secondes la contraction de la chaîne postérieure.",
+      "Relâchez délicatement."
+    ],
+    tips: "⚠️ Si la position bras tendus en avant gêne l'épaule, gardez les bras pliés le long de votre buste."
+  }
+};
+
+const abdosExercises = [];
 
 let abdosTicker = null;
 let abdosExerciseIndex = 0;
@@ -1323,9 +1732,9 @@ let abdosRemaining = 0;
 let abdosIsPaused = false;
 let abdosIsRunning = false;
 let abdosInRest = false; 
-let abdosWorkTime = 40;
-let abdosRestTime = 20;
-let abdosTotalRounds = 1;
+let abdosWorkTime = 30;
+let abdosRestTime = 30;
+let abdosTotalRounds = 3;
 
 function speakAbdos(text){
   if("speechSynthesis" in window){
@@ -1336,25 +1745,356 @@ function speakAbdos(text){
   }
 }
 
+function selectAbdosPreset(key) {
+  const p = abdosPresets[key];
+  if (!p) return;
+  
+  document.getElementById("abdos-work").value = p.work;
+  document.getElementById("abdos-rest").value = p.rest;
+  document.getElementById("abdos-rounds").value = p.rounds;
+  
+  // Remplissage du tableau d'exercices
+  abdosExercises.length = 0;
+  p.exercises.forEach(ex => abdosExercises.push(ex));
+  
+  updatePresetPreview();
+}
+
+function updatePresetPreview() {
+  const preview = document.getElementById("abdos-list-preview");
+  if (!preview) return;
+  
+  preview.innerHTML = `<strong style="color:var(--g)">📋 Programme (cliquez sur un exercice pour voir les consignes) :</strong><br><div style="margin-top:6px; display:grid; gap:5px;">` + 
+    abdosExercises.map((ex, i) => {
+      return `<span onclick="showExerciseDetails('${ex.replace(/'/g, "\\'")}')" style="cursor:pointer; color:var(--tx); font-size:0.8rem; border-bottom:1px dashed var(--g); padding:4px 0; display:inline-block; width:fit-content;">${i+1}. ${ex}</span>`;
+    }).join('') + `</div>`;
+}
+
+// Ouvre la boîte modale des consignes
+function showExerciseDetails(name) {
+  const ex = exerciseVisuals[name];
+  if (!ex) return;
+
+  document.getElementById("modalTitle").textContent = name;
+  
+  // Génère et insère le graphique dynamique vectoriel de dessin animé
+  const container = document.getElementById("modalVisualContainer");
+  if (container) {
+    container.innerHTML = getExerciseSVG(name);
+  }
+  
+  const stepsList = document.getElementById("modalSteps");
+  stepsList.innerHTML = ex.steps.map(s => `<li>${s}</li>`).join('');
+  
+  document.getElementById("modalTips").innerHTML = ex.tips;
+  
+  const modal = document.getElementById("exerciseModal");
+  modal.style.display = "flex";
+}
+
+// Génère une animation stylisée "dessin animé 2D" en SVG/CSS avec dégradés et textures
+function getExerciseSVG(name) {
+  const lower = name.toLowerCase();
+  
+  if (lower.includes("squat")) {
+    return `
+      <svg viewBox="0 0 100 100" width="120" height="120">
+        <defs>
+          <linearGradient id="skin" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#ffedd5" />
+            <stop offset="100%" stop-color="#fed7aa" />
+          </linearGradient>
+          <linearGradient id="jersey" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#d4ff5e" />
+            <stop offset="100%" stop-color="#80b300" />
+          </linearGradient>
+          <radialGradient id="shadow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="rgba(0,0,0,0.6)" />
+            <stop offset="100%" stop-color="rgba(0,0,0,0)" />
+          </radialGradient>
+        </defs>
+        <!-- Ombre au sol dynamique -->
+        <ellipse cx="50" cy="85" rx="25" ry="5" fill="url(#shadow)" style="animation: squat-shadow-scale 2.5s ease-in-out infinite;"/>
+        
+        <!-- Personnage -->
+        <g style="transform-origin: 50px 85px; animation: body-bend 2.5s ease-in-out infinite;">
+          <!-- Cuisse -->
+          <line x1="45" y1="55" x2="65" y2="70" stroke="#252525" stroke-width="8" stroke-linecap="round" />
+          
+          <!-- Buste -->
+          <g style="transform-origin: 45px 55px; animation: torso-lean 2.5s ease-in-out infinite;">
+            <!-- Maillot dégradé -->
+            <path d="M 40 30 L 50 30 L 45 55 L 35 55 Z" fill="url(#jersey)" stroke="#80b300" stroke-width="1.5" stroke-linejoin="round"/>
+            <!-- Tête -->
+            <circle cx="45" cy="20" r="8" fill="url(#skin)"/>
+            <!-- Casquette orange -->
+            <path d="M 38 18 C 38 10, 52 10, 52 18 Z" fill="#ff6b2b"/> 
+            <!-- Bras croisé -->
+            <path d="M 42 35 Q 30 40 45 45" fill="none" stroke="url(#skin)" stroke-width="6" stroke-linecap="round"/>
+          </g>
+          <!-- Mollet -->
+          <line x1="65" y1="70" x2="55" y2="85" stroke="#f0f0f0" stroke-width="8" stroke-linecap="round" />
+        </g>
+        <style>
+          @keyframes body-bend {
+            0%, 100% { transform: translateY(0) scaleY(1); }
+            50% { transform: translateY(18px) scaleY(0.68); }
+          }
+          @keyframes torso-lean {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(15deg); }
+          }
+          @keyframes squat-shadow-scale {
+            0%, 100% { rx: 25; ry: 5; opacity: 0.6; }
+            50% { rx: 33; ry: 7; opacity: 0.9; }
+          }
+        </style>
+      </svg>
+    `;
+  }
+  
+  if (lower.includes("pont") || lower.includes("bridge")) {
+    return `
+      <svg viewBox="0 0 100 100" width="120" height="120">
+        <defs>
+          <linearGradient id="skin" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#ffedd5" />
+            <stop offset="100%" stop-color="#fed7aa" />
+          </linearGradient>
+          <linearGradient id="jersey" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#d4ff5e" />
+            <stop offset="100%" stop-color="#80b300" />
+          </linearGradient>
+          <radialGradient id="shadow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="rgba(0,0,0,0.6)" />
+            <stop offset="100%" stop-color="rgba(0,0,0,0)" />
+          </radialGradient>
+        </defs>
+        <!-- Tapis de sol bleu -->
+        <line x1="5" y1="80" x2="95" y2="80" stroke="#1d4ed8" stroke-width="4" stroke-linecap="round"/>
+        <!-- Ombre sous le bassin qui bouge -->
+        <ellipse cx="53" cy="80" rx="16" ry="4" fill="url(#shadow)" style="animation: bridge-shadow 2.5s ease-in-out infinite;"/>
+        
+        <!-- Tête et Casquette -->
+        <circle cx="25" cy="73" r="7" fill="url(#skin)"/>
+        <path d="M 21 67 C 21 61, 29 61, 29 67 Z" fill="#ff6b2b"/>
+        
+        <!-- Corps articulé -->
+        <g style="transform-origin: 32px 75px; animation: bridge-rotate 2.5s ease-in-out infinite;">
+          <!-- Maillot -->
+          <path d="M 32 75 L 55 75 L 55 60 L 32 60 Z" fill="url(#jersey)" stroke="#80b300" stroke-width="1.5" stroke-linejoin="round"/>
+          <!-- Short -->
+          <line x1="55" y1="67" x2="72" y2="67" stroke="#252525" stroke-width="8" stroke-linecap="round"/>
+          <!-- Mollet -->
+          <line x1="72" y1="67" x2="72" y2="80" stroke="#f0f0f0" stroke-width="8" stroke-linecap="round"/>
+        </g>
+        <style>
+          @keyframes bridge-rotate {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(-22deg); }
+          }
+          @keyframes bridge-shadow {
+            0%, 100% { opacity: 0.8; transform: scaleX(1); }
+            50% { opacity: 0.2; transform: scaleX(0.5) translateX(-8px); }
+          }
+        </style>
+      </svg>
+    `;
+  }
+  
+  if (lower.includes("gainage") || lower.includes("planche")) {
+    return `
+      <svg viewBox="0 0 100 100" width="120" height="120">
+        <defs>
+          <linearGradient id="skin" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#ffedd5" />
+            <stop offset="100%" stop-color="#fed7aa" />
+          </linearGradient>
+          <linearGradient id="jersey" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#d4ff5e" />
+            <stop offset="100%" stop-color="#80b300" />
+          </linearGradient>
+        </defs>
+        <line x1="10" y1="82" x2="90" y2="82" stroke="var(--bd)" stroke-width="3" stroke-linecap="round"/>
+        
+        <!-- Corps de profil incliné qui tremble légèrement sous la fatigue -->
+        <g transform="rotate(-15 25 75)" style="animation: plank-shake 0.12s linear infinite alternate;">
+          <circle cx="20" cy="75" r="4" fill="#252525"/>
+          <line x1="20" y1="75" x2="50" y2="75" stroke="#f0f0f0" stroke-width="8" stroke-linecap="round"/>
+          <!-- Maillot -->
+          <path d="M 50 71 L 75 71 L 75 79 L 50 79 Z" fill="url(#jersey)"/>
+          <!-- Bras d'appui -->
+          <path d="M 72 75 L 72 88 M 72 88 L 80 88" fill="none" stroke="url(#skin)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- Tête -->
+          <circle cx="82" cy="72" r="7" fill="url(#skin)"/>
+          <path d="M 78 66 C 78 60, 86 60, 86 66 Z" fill="#ff6b2b"/>
+        </g>
+        
+        <!-- Goutte de sueur de fatigue animée -->
+        <path d="M 85 52 Q 83 57 81 52" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" style="animation: drop-flow 1.5s infinite;"/>
+        <style>
+          @keyframes plank-shake {
+            0% { transform: rotate(-14.5deg) translateY(0.5px); }
+            100% { transform: rotate(-15.5deg) translateY(-0.5px); }
+          }
+          @keyframes drop-flow {
+            0% { transform: translateY(-10px); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(12px); opacity: 0; }
+          }
+        </style>
+      </svg>
+    `;
+  }
+  
+  if (lower.includes("relevé") || lower.includes("genoux") || lower.includes("fentes")) {
+    return `
+      <svg viewBox="0 0 100 100" width="120" height="120">
+        <defs>
+          <linearGradient id="skin" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#ffedd5" />
+            <stop offset="100%" stop-color="#fed7aa" />
+          </linearGradient>
+          <linearGradient id="jersey" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#d4ff5e" />
+            <stop offset="100%" stop-color="#80b300" />
+          </linearGradient>
+        </defs>
+        <!-- Chaise stylisée en bois de profil -->
+        <path d="M 38 80 L 38 52 L 55 52 M 38 52 L 30 30" fill="none" stroke="#854d0e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- Tête et Casquette -->
+        <circle cx="45" cy="26" r="7" fill="url(#skin)"/>
+        <path d="M 41 20 C 41 14, 49 14, 49 20 Z" fill="#ff6b2b"/>
+        <!-- Torse droit -->
+        <path d="M 42 33 L 48 33 L 45 55 L 39 55 Z" fill="url(#jersey)"/>
+        <!-- Bras reposant sur la cuisse -->
+        <path d="M 44 38 L 52 48" fill="none" stroke="url(#skin)" stroke-width="5" stroke-linecap="round"/>
+        <!-- Jambe mobile articulée qui se lève (Genou) -->
+        <g style="transform-origin: 45px 52px; animation: knee-raise-anim 2.5s ease-in-out infinite;">
+          <line x1="45" y1="52" x2="68" y2="52" stroke="#252525" stroke-width="8" stroke-linecap="round"/> <!-- Cuisse -->
+          <line x1="68" y1="52" x2="68" y2="76" stroke="#f0f0f0" stroke-width="8" stroke-linecap="round"/> <!-- Mollet -->
+        </g>
+        <style>
+          @keyframes knee-raise-anim {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(-32deg); }
+          }
+        </style>
+      </svg>
+    `;
+  }
+  
+  if (lower.includes("crunch") || lower.includes("dead bug") || lower.includes("vacuum")) {
+    return `
+      <svg viewBox="0 0 100 100" width="120" height="120">
+        <defs>
+          <linearGradient id="skin" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#ffedd5" />
+            <stop offset="100%" stop-color="#fed7aa" />
+          </linearGradient>
+          <linearGradient id="jersey" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#d4ff5e" />
+            <stop offset="100%" stop-color="#80b300" />
+          </linearGradient>
+        </defs>
+        <line x1="10" y1="80" x2="90" y2="80" stroke="var(--bd)" stroke-width="3"/>
+        <!-- Jambes relevées pliées immobiles -->
+        <path d="M 55 75 L 72 55 L 85 75" fill="none" stroke="#252525" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- Partie supérieure du buste qui s'enroule -->
+        <g style="transform-origin: 55px 75px; animation: crunch-curl 2.5s ease-in-out infinite;">
+          <path d="M 55 75 L 35 70 L 37 62 L 55 67 Z" fill="url(#jersey)"/>
+          <circle cx="28" cy="62" r="7" fill="url(#skin)"/>
+          <path d="M 24 56 C 24 50, 32 50, 32 56 Z" fill="#ff6b2b"/>
+          <path d="M 38 68 C 30 68, 30 72, 38 72" fill="none" stroke="url(#skin)" stroke-width="5" stroke-linecap="round"/>
+        </g>
+        <style>
+          @keyframes crunch-curl {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(-16deg); }
+          }
+        </style>
+      </svg>
+    `;
+  }
+  
+  // Par défaut, ou pour l'utilisation d'élastiques / rééducation
+  return `
+    <svg viewBox="0 0 100 100" width="120" height="120">
+      <defs>
+        <linearGradient id="skin" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#ffedd5" />
+          <stop offset="100%" stop-color="#fed7aa" />
+        </linearGradient>
+        <linearGradient id="jersey" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#d4ff5e" />
+          <stop offset="100%" stop-color="#80b300" />
+        </linearGradient>
+      </defs>
+      <rect x="10" y="45" width="6" height="10" rx="2" fill="var(--bd)"/>
+      <circle cx="65" cy="28" r="7" fill="url(#skin)"/>
+      <path d="M 61 22 C 61 16, 69 16, 69 22 Z" fill="#ff6b2b"/>
+      <path d="M 60 35 L 68 35 L 65 65 L 57 65 Z" fill="url(#jersey)"/>
+      <path d="M 60 65 L 55 85 M 65 65 L 70 85" fill="none" stroke="#252525" stroke-width="7" stroke-linecap="round"/>
+      <g style="transform-origin: 62px 38px; animation: elastic-pull 2.5s ease-in-out infinite;">
+        <line x1="16" y1="50" x2="48" y2="45" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
+        <path d="M 62 38 L 48 45" fill="none" stroke="url(#skin)" stroke-width="6" stroke-linecap="round"/>
+      </g>
+      <style>
+        @keyframes elastic-pull {
+          0%, 100% { transform: rotate(0deg); }
+          50% { transform: rotate(-25deg); }
+        }
+      </style>
+    </svg>
+  `;
+}
+
+// Ferme la boîte modale
+function closeExerciseModal() {
+  document.getElementById("exerciseModal").style.display = "none";
+}
+
 function startAbdosSession(){
-  abdosWorkTime = parseInt(document.getElementById("abdos-work").value) || 40;
-  abdosRestTime = parseInt(document.getElementById("abdos-rest").value) || 20;
-  abdosTotalRounds = parseInt(document.getElementById("abdos-rounds").value) || 1;
+  abdosWorkTime = parseInt(document.getElementById("abdos-work").value) || 30;
+  abdosRestTime = parseInt(document.getElementById("abdos-rest").value) || 30;
+  abdosTotalRounds = parseInt(document.getElementById("abdos-rounds").value) || 3;
 
   abdosExerciseIndex = 0;
   abdosRound = 1;
   abdosIsPaused = false;
   abdosIsRunning = true;
   abdosInRest = false;
-  abdosRemaining = abdosWorkTime;
 
   if (abdosTicker) clearInterval(abdosTicker);
 
-  updateAbdosControlsUI();
-  speakAbdos(abdosExercises[abdosExerciseIndex]);
-  updateAbdosDisplay();
+  // Décompte de préparation 3.2.1 au démarrage de la séance d'Abdos
+  let startCountdown = 3;
+  const display = document.getElementById("abdos-display");
+  display.innerHTML = `<span style="font-size: 15px; color: var(--mu); text-transform: uppercase;">Préparez-vous...</span><br><br><span style="font-family:'Space Mono',monospace; font-size:64px; color:var(--o);">${startCountdown}</span>`;
+  speakAbdos("Préparez-vous");
+  beep(600, 0.15);
 
-  abdosTicker = setInterval(abdosTick, 1000);
+  document.getElementById("abdos-btnGo").disabled = true;
+  document.getElementById("abdos-btnGo").textContent = "▶ Préparation...";
+
+  abdosTicker = setInterval(() => {
+    startCountdown--;
+    if (startCountdown > 0) {
+      display.innerHTML = `<span style="font-size: 15px; color: var(--mu); text-transform: uppercase;">Préparez-vous...</span><br><br><span style="font-family:'Space Mono',monospace; font-size:64px; color:var(--o);">${startCountdown}</span>`;
+      beep(600, 0.15);
+    } else {
+      clearInterval(abdosTicker);
+      
+      // Lancement de la séance de musculation
+      abdosRemaining = abdosWorkTime;
+      speakAbdos(abdosExercises[abdosExerciseIndex]);
+      updateAbdosDisplay();
+      playAbdosMusic(false); // Lance la musique de travail
+      
+      abdosTicker = setInterval(abdosTick, 1000);
+      updateAbdosControlsUI();
+    }
+  }, 1000);
 }
 
 function abdosTick() {
@@ -1368,6 +2108,7 @@ function abdosTick() {
       abdosInRest = true;
       abdosRemaining = abdosRestTime;
       speakAbdos("Repos");
+      playAbdosMusic(true); // Bascule sur la musique de repos
     } else {
       abdosInRest = false;
       abdosExerciseIndex++;
@@ -1383,6 +2124,7 @@ function abdosTick() {
 
       abdosRemaining = abdosWorkTime;
       speakAbdos(abdosExercises[abdosExerciseIndex]);
+      playAbdosMusic(false); // Bascule sur la musique de travail
     }
     updateAbdosDisplay();
   }
@@ -1417,8 +2159,11 @@ function pauseAbdosSession() {
   updateAbdosControlsUI();
   if (abdosIsPaused) {
     speakAbdos("Pause");
+    aud.abdosWork.pause();
+    aud.abdosRest.pause();
   } else {
     speakAbdos("Reprise");
+    playAbdosMusic(abdosInRest);
   }
 }
 
@@ -1436,6 +2181,11 @@ function endAbdosSession(finished) {
   if (window.speechSynthesis) {
     window.speechSynthesis.cancel();
   }
+  
+  aud.abdosWork.pause();
+  aud.abdosRest.pause();
+  const npBar = document.getElementById('npBar');
+  if (npBar) npBar.classList.remove('vis');
 
   const display = document.getElementById("abdos-display");
   if (finished) {
@@ -1454,6 +2204,7 @@ function skipAbdosExercise() {
     abdosInRest = true;
     abdosRemaining = abdosRestTime;
     speakAbdos("Repos");
+    playAbdosMusic(true);
   } else {
     abdosInRest = false;
     abdosExerciseIndex++;
@@ -1469,8 +2220,39 @@ function skipAbdosExercise() {
 
     abdosRemaining = abdosWorkTime;
     speakAbdos(abdosExercises[abdosExerciseIndex]);
+    playAbdosMusic(false);
   }
   updateAbdosDisplay();
+}
+
+function playAbdosMusic(inRest) {
+  if (aud.abdosWork) aud.abdosWork.pause();
+  if (aud.abdosRest) aud.abdosRest.pause();
+  const bar = document.getElementById('npBar');
+  if (!abdosIsRunning) {
+    if (bar) bar.classList.remove('vis');
+    return;
+  }
+
+  if (inRest) {
+    if (audLoaded.abdosRest) {
+      aud.abdosRest.play().catch(()=>{});
+      document.getElementById('npName').textContent = audName.abdosRest;
+      document.getElementById('npTag').textContent = '🍑 REPOS ABDOS';
+      if (bar) bar.classList.add('vis');
+    } else {
+      if (bar) bar.classList.remove('vis');
+    }
+  } else {
+    if (audLoaded.abdosWork) {
+      aud.abdosWork.play().catch(()=>{});
+      document.getElementById('npName').textContent = audName.abdosWork;
+      document.getElementById('npTag').textContent = '🍑 TRAVAIL ABDOS';
+      if (bar) bar.classList.add('vis');
+    } else {
+      if (bar) bar.classList.remove('vis');
+    }
+  }
 }
 
 function updateAbdosControlsUI() {
@@ -1506,6 +2288,9 @@ function updateAbdosControlsUI() {
     btnSkip.disabled = true;
   }
 }
+
+// Initialise le premier programme par défaut au chargement
+selectAbdosPreset("n1-c1");
 </script>
 </body>
 </html>
